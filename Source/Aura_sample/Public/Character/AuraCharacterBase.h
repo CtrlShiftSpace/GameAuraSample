@@ -19,5 +19,8 @@ protected:
 	// 當遊戲開始或物件產生時觸發
 	virtual void BeginPlay() override;
 
-
+	// 使用UProperty實現Reflection
+	UPROPERTY(EditAnywhere, Category = "Combat");
+	// TObjectPtr: TemplateClass wrapper around raw C++ Pointer
+	TObjectPtr<USkeletalMeshComponent> Weapon;
 };
