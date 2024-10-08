@@ -9,6 +9,9 @@
 // 要加這行需在專案名.Build.cs 檔案中的PublicDependencyModuleNames.AddRange 加上 "EnhancedInput"
 class UInputMappingContext;
 
+class UInputAction;
+struct FInputActionValue;
+
 /**
  * 
  */
@@ -20,10 +23,22 @@ class AURA_SAMPLE_API AAuraPlayerController : public APlayerController
 public:
 	// 建構函式
 	AAuraPlayerController();
+
 protected:
 	// 覆寫BeginPlay方法
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
+
 private:
-	UPROPERTY(EditAnywhere, Category = "Input");
+	// 將下列的變數能夠進行反射(reflect)
+	UPROPERTY(EditAnywhere, Category = "Input")
+	// 輸入Mapping
 	TObjectPtr<UInputMappingContext> AuraContext;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> MoveAction;
+	
+
+	void Move(const FInputActionValue& InputActionValue);
+
 };
