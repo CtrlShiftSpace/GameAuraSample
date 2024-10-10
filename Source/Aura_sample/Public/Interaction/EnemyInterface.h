@@ -25,4 +25,5 @@ public:
 	// 純虛函式
 	virtual void HighlightActor() = 0;
 	virtual void UnHighlightActor() = 0;
+
 };
