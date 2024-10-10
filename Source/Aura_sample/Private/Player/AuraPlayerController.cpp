@@ -4,6 +4,7 @@
 #include "Player/AuraPlayerController.h"
 
 #include "EnhancedInputSubsystems.h"
+#include "Interaction/EnemyInterface.h"
 #include "EnhancedInputComponent.h"
 
 struct FInputAction;
@@ -12,6 +13,13 @@ AAuraPlayerController::AAuraPlayerController()
 {
 	// 當server更新值，發送到client端機制
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -63,5 +71,65 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	{
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+	}
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) {
+		return;
+	}
+
+	LastActor = ThisActor;
+	ThisActor = CursorHit.GetActor();
+
+	/**
+	 * 情境分析
+	 * A. LastActor == null & ThisActor == null
+	 *		不處理
+	 * B. LastActor == null & ThisActor == Actor
+	 *		Highlight ThisActor
+	 * C. LastActor == Actor & ThisActor == null
+	 *		Unhighlight LastActor
+	 * D. LastActor == Actor & ThisActor == Actor & LastActor != ThisActor
+	 *		Unhighlight LastActor and Highlight ThisActor
+	 * E. LastActor == Actor & ThisActor == Actor & LastActor == ThisActor
+	 *		不處理
+	 */
+
+	if (LastActor == nullptr) 
+	{
+		if (ThisActor != nullptr)
+		{
+			// Case B
+			ThisActor->HighlightActor();
+		} 
+		else
+		{
+			// Case A
+		}
+	}
+	else 
+	{
+		if (ThisActor == nullptr)
+		{
+			// Case C
+			LastActor->UnHighlightActor();
+		}
+		else 
+		{
+			if (ThisActor != LastActor) 
+			{
+				// Case D
+				ThisActor->HighlightActor();
+				LastActor->UnHighlightActor();
+			}
+			else 
+			{
+				// Case E
+			}
+		}
 	}
 }

@@ -11,6 +11,7 @@ class UInputMappingContext;
 
 class UInputAction;
 struct FInputActionValue;
+class IEnemyInterface;
 
 /**
  * 
@@ -23,6 +24,7 @@ class AURA_SAMPLE_API AAuraPlayerController : public APlayerController
 public:
 	// 建構函式
 	AAuraPlayerController();
+	virtual void PlayerTick(float DeltaTime);
 
 protected:
 	// 覆寫BeginPlay方法
@@ -40,5 +42,10 @@ private:
 	
 
 	void Move(const FInputActionValue& InputActionValue);
+	
+	void CursorTrace();
+
+	TScriptInterface<IEnemyInterface> LastActor;
+	TScriptInterface<IEnemyInterface> ThisActor;
 
 };
