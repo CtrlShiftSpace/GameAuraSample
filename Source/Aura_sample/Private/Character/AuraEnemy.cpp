@@ -14,6 +14,7 @@ AAuraEnemy::AAuraEnemy()
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
 	// 設定一致server 與 client的狀態會同步
 	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	AttributeSet = CreateDefaultSubobject<UAttributeSet>("AttributeSet");
 
