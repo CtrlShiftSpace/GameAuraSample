@@ -18,6 +18,9 @@ class AURA_SAMPLE_API AAuraCharacter : public AAuraCharacterBase
 	
 public:
 	AAuraCharacter();
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Camera")
@@ -25,5 +28,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> CharacterCamera;
+
+private:
+	void InitAbilityActorInfo();
 
 };
