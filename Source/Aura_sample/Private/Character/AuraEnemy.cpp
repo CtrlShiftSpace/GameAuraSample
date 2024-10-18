@@ -4,10 +4,19 @@
 #include "Character/AuraEnemy.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Aura_sample/Aura_sample.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 
 AAuraEnemy::AAuraEnemy()
 {
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
+	// 設定一致server 與 client的狀態會同步
+	AbilitySystemComponent->SetIsReplicated(true);
+
+	AttributeSet = CreateDefaultSubobject<UAttributeSet>("AttributeSet");
+
 }
 
 void AAuraEnemy::HighlightActor()
