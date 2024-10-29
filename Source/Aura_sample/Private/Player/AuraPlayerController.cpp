@@ -31,9 +31,11 @@ void AAuraPlayerController::BeginPlay()
 	// 取得local玩家的增強輸入
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	// 確認是否成功取得
-	check(Subsystem);
-	// 新增mapping
-	Subsystem->AddMappingContext(AuraContext, 0);
+	if (Subsystem) 
+	{
+		// 新增mapping
+		Subsystem->AddMappingContext(AuraContext, 0);
+	}
 
 	// 是否顯示滑鼠
 	bShowMouseCursor = true;
