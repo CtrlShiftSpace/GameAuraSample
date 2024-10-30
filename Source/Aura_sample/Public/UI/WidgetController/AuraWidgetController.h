@@ -46,6 +46,8 @@ class AURA_SAMPLE_API UAuraWidgetController : public UObject
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
+	// 用來Broadcast 初始值
+	virtual void BroadcastInitialValues();
 	
 protected:
 
