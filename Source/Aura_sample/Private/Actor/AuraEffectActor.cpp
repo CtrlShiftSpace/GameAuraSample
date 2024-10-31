@@ -36,6 +36,8 @@ void AAuraEffectActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 		// 因為AuraAttributeSet是const，因此不能在此pointer進行修改，以下這段是為教學使用，不建議用此作法
 		UAuraAttributeSet* MutableAuraAttributeSet = const_cast<UAuraAttributeSet*>(AuraAttributeSet);
 		MutableAuraAttributeSet->SetHealth(AuraAttributeSet->GetHealth() + 25.5);
+		// 降低Mana值
+		MutableAuraAttributeSet->SetMana(AuraAttributeSet->GetMana() - 25.5);
 		Destroy();
 	}
 }
