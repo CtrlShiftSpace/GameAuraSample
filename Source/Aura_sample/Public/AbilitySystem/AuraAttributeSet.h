@@ -26,6 +26,10 @@ public:
 	UAuraAttributeSet();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	// 覆寫PreAttributeChange方法，用來在屬性值改變之前進行預處理
+	// 但不要在這邊處理遊戲邏輯或觸發相關事件
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+
 	// 需要能夠由server replicate 到 client
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
