@@ -85,13 +85,13 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 
 		// 建立一個空的陣列 HandlesToRemove 來存放要移除的效果
 		TArray<FActiveGameplayEffectHandle> HandlesToRemove;
-		for (auto HandlePair : ActiveEffectHandles)
+		for (TTuple<FActiveGameplayEffectHandle, UAbilitySystemComponent*> HandlePair : ActiveEffectHandles)
 		{
 			// 檢查效果是否屬於此角色
 			if (TargetASC == HandlePair.Value)
 			{
 				// 將此效果從角色身上移除
-				TargetASC->RemoveActiveGameplayEffect(HandlePair.Key);
+				TargetASC->RemoveActiveGameplayEffect(HandlePair.Key, 1);
 				// 先加入到待移除陣列中
 				HandlesToRemove.Add(HandlePair.Key);
 			}
