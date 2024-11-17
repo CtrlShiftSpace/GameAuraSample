@@ -30,6 +30,7 @@ protected:
 	TObjectPtr<UCameraComponent> CharacterCamera;
 
 private:
-	void InitAbilityActorInfo();
+	// 改從 AAuraCharacterBase 繼承的方法覆寫
+	virtual void InitAbilityActorInfo() override;
 
 };
