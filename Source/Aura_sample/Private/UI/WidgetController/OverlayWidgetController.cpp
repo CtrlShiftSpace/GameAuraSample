@@ -36,7 +36,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		AuraAttributeSet->GetMaxManaAttribute()).AddUObject(this, &UOverlayWidgetController::MaxManaChanged);
 
 	// 增加當EffectAssetTags呼叫Broadcast時執行的程式
-	// 之所以使用Lambda是能簡化還要定義funciton名稱並指定的情況，相當於匿名funciton
+	// 之所以使用Lambda是能簡化還要定義funciton名稱並指定的情況，相當於匿名function
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda
 	(
 		[](const FGameplayTagContainer& AssetTags)->
