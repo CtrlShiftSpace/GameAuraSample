@@ -39,12 +39,21 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	// 之所以使用Lambda是能簡化還要定義funciton名稱並指定的情況，相當於匿名function
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda
 	(
-		[](const FGameplayTagContainer& AssetTags)->
+		[this](const FGameplayTagContainer& AssetTags)->
 		void{
 			for (const FGameplayTag Tag : AssetTags)
 			{
-				const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
-				GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, Msg);
+				// 假設Tag = Message.HealthPotion
+				// 則 "Message.HealthPotion".MatchesTag("Message") 結果為 true
+				// "Message".MatchesTag("Message.HealthPotion") 結果為 false
+				FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
+				// 檢查是否符合Tag判斷，也就是當Tag只有在有Message才會執行以下內容
+				if (Tag.MatchesTag(MessageTag))
+				{
+					// 使用Lambda 會無法直接呼叫該成員的函式，需在上方使用this才能知道傳入的類別
+					const FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+					OnMessageWidgetRow.Broadcast(*Row);
+				}
 			}
 		}
 	);
