@@ -10,9 +10,7 @@
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	InitHealth(1.f);
-	InitMaxHealth(100.f);
 	InitMana(50.f);
-	InitMaxMana(150.f);
 }
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -48,7 +46,7 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	if (Attribute == GetHealthAttribute())
 	{
 		// 限制值的範圍在0~MaxHealth之間
-		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
+		//NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
 		UE_LOG(LogTemp, Warning, TEXT("Health: %f"), NewValue);
 	}
 	if (Attribute == GetMaxHealthAttribute())
@@ -58,7 +56,7 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	if (Attribute == GetManaAttribute())
 	{
 		// 限制值的範圍在0~MaxMana之間
-		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxMana());
+		//NewValue = FMath::Clamp(NewValue, 0.f, GetMaxMana());
 		UE_LOG(LogTemp, Warning, TEXT("Mana: %f"), NewValue);
 	}
 	if (Attribute == GetMaxManaAttribute())
