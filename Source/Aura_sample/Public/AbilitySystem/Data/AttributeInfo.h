@@ -1,0 +1,42 @@
+// Copyright Luke
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Engine/DataAsset.h"
+#include "GameplayTagContainer.h"
+#include "AttributeInfo.generated.h"
+
+USTRUCT(BlueprintType)
+struct FauraAttributeInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AttributeTag = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText AttributeName = FText();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText AttributeDescription = FText();
+
+	UPROPERTY(BlueprintReadOnly)
+	float AttributeValue = 0.f;
+};
+
+/**
+ * 
+ */
+UCLASS()
+class AURA_SAMPLE_API UAttributeInfo : public UDataAsset
+{
+	GENERATED_BODY()
+	
+public:
+	// 依據傳入的 FGameplayTag 尋找相對應的屬性資訊
+	FauraAttributeInfo FindAttributeInfoForTag(const FGameplayTag& AttributeTag, bool bLogNotFound = false) const;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FauraAttributeInfo> AttributeInformation;
+};

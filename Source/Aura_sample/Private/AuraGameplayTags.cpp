@@ -24,7 +24,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	);
 	GameplayTags.Attributes_Primary_Vigor = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Primary.Vigor"),
-		FString("Health")
+		FString("Increases Health")
 	);
 
 	/**
