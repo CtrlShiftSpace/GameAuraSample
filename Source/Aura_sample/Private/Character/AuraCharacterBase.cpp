@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayAbilities/Public/GameplayEffectTypes.h"
 #include "GameplayAbilities/Public/GameplayEffect.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
@@ -57,4 +58,13 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+}
+
+void AAuraCharacterBase::AddCharacterAbilities()
+{
+	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	// 檢視是否為Server權限，不是就return
+	if (!HasAuthority()) return;
+
+	AuraASC->AddCharacterAbilites(StartupAbilities);
 }
