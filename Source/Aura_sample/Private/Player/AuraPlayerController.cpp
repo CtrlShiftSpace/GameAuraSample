@@ -30,6 +30,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	CursorTrace();
+	AutoRun();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -187,7 +188,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
 			// 建立導航路徑
-			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CacheDestination))
+			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
 				Spline->ClearSplinePoints();
 				// 依序取出導航設定的座標
@@ -197,8 +198,13 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 					// 繪製移動路線
 					DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
 				}
-				// 設定當前為自動移動
-				bAutoRunning = true;
+
+				if (NavPath->PathPoints.Num() > 0)
+				{
+					CachedDestination = NavPath->PathPoints.Last();
+					// 設定當前為自動移動
+					bAutoRunning = true;
+				}
 			}
 		}
 		FollowTime = 0.f;
@@ -235,13 +241,13 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		// 取得目前滑鼠的位置
 		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
 		{
-			CacheDestination = Hit.ImpactPoint;
+			CachedDestination = Hit.ImpactPoint;
 		}
 
 		// 計算滑鼠與角色的直線距離，並且normalize
 		if (APawn* ControlledPawn = GetPawn())
 		{
-			const FVector WorldDirection = (CacheDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+			const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
 			ControlledPawn->AddMovementInput(WorldDirection);
 		}
 	}
@@ -255,4 +261,25 @@ UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
 		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
 	}
 	return AuraAbilitySystemComponent;
+}
+
+void AAuraPlayerController::AutoRun()
+{
+	if (!bAutoRunning) return;
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		// 找到最接近的 spline 上的點，並返回該點的 FVector 座標
+		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+		// 取得角色在這個位置上應該移動的方向
+		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+		ControlledPawn->AddMovementInput(Direction);
+
+		// 計算路線到目標點的距離
+		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+		// 如果已經離目標點在可接受的距離，就停止自動移動
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
+		}
+	}
 }
