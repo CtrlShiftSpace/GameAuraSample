@@ -12,6 +12,8 @@
 #include "GameplayAbilities/Public/AbilitySystemBlueprintLibrary.h"
 #include "Components/SplineComponent.h"
 #include "AuraGameplayTags.h"
+#include "NavigationSystem.h"
+#include "NavigationPath.h"
 
 struct FInputAction;
 
@@ -160,8 +162,48 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	if (GetASC() == nullptr) return;
-	GetASC()->AbilityInputTagReleased(InputTag);
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagReleased(InputTag);
+		}
+		return;
+	}
+
+	// 如果是點擊到敵人則觸發能力
+	if (bTargeting)
+	{
+
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+	}
+	else
+	{
+		APawn* ControlledPawn = GetPawn();
+		// 如果滑鼠跟隨時間小於設置的點擊時長，則認為是點擊動作
+		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+		{
+			// 建立導航路徑
+			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CacheDestination))
+			{
+				Spline->ClearSplinePoints();
+				// 依序取出導航設定的座標
+				for (const FVector& PointLoc : NavPath->PathPoints)
+				{
+					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+					// 繪製移動路線
+					DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
+				}
+				// 設定當前為自動移動
+				bAutoRunning = true;
+			}
+		}
+		FollowTime = 0.f;
+		bTargeting = false;
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
