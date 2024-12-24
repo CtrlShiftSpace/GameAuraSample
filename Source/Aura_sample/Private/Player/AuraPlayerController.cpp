@@ -10,6 +10,8 @@
 #include "Input/AuraInputComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "GameplayAbilities/Public/AbilitySystemBlueprintLibrary.h"
+#include "Components/SplineComponent.h"
+#include "AuraGameplayTags.h"
 
 struct FInputAction;
 
@@ -17,6 +19,8 @@ AAuraPlayerController::AAuraPlayerController()
 {
 	// 當server更新值，發送到client端機制
 	bReplicates = true;
+
+	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
@@ -146,7 +150,12 @@ void AAuraPlayerController::CursorTrace()
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	//GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *InputTag.ToString());
+	// 檢查室按下滑鼠左鍵
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = ThisActor ? true : false;
+		bAutoRunning = false;
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
@@ -157,8 +166,44 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	if (GetASC() == nullptr) return;
-	GetASC()->AbilityInputTagHeld(InputTag);
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC()) 
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+		return;
+	}
+	
+	// 如果是點擊到敵人則觸發能力
+	if (bTargeting)
+	{
+		
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+	}
+	else
+	{
+		// 累加跟隨滑鼠的時間
+		FollowTime += GetWorld()->GetDeltaSeconds();
+
+		FHitResult Hit;
+		// 取得目前滑鼠的位置
+		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+		{
+			CacheDestination = Hit.ImpactPoint;
+		}
+
+		// 計算滑鼠與角色的直線距離，並且normalize
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			const FVector WorldDirection = (CacheDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+			ControlledPawn->AddMovementInput(WorldDirection);
+		}
+	}
+	
 }
 
 UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
