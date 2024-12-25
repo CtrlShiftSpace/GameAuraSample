@@ -92,7 +92,6 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 
 void AAuraPlayerController::CursorTrace()
 {
-	FHitResult CursorHit;
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit) {
 		return;
@@ -101,53 +100,10 @@ void AAuraPlayerController::CursorTrace()
 	LastActor = ThisActor;
 	ThisActor = CursorHit.GetActor();
 
-	/**
-	 * 情境分析
-	 * A. LastActor == null & ThisActor == null
-	 *		不處理
-	 * B. LastActor == null & ThisActor == Actor
-	 *		Highlight ThisActor
-	 * C. LastActor == Actor & ThisActor == null
-	 *		Unhighlight LastActor
-	 * D. LastActor == Actor & ThisActor == Actor & LastActor != ThisActor
-	 *		Unhighlight LastActor and Highlight ThisActor
-	 * E. LastActor == Actor & ThisActor == Actor & LastActor == ThisActor
-	 *		不處理
-	 */
-
-	if (LastActor == nullptr) 
+	if (LastActor != ThisActor)
 	{
-		if (ThisActor != nullptr)
-		{
-			// Case B
-			ThisActor->HighlightActor();
-			
-		} 
-		else
-		{
-			// Case A
-		}
-	}
-	else 
-	{
-		if (ThisActor == nullptr)
-		{
-			// Case C
-			LastActor->UnHighlightActor();
-		}
-		else 
-		{
-			if (ThisActor != LastActor) 
-			{
-				// Case D
-				ThisActor->HighlightActor();
-				LastActor->UnHighlightActor();
-			}
-			else 
-			{
-				// Case E
-			}
-		}
+		if (LastActor) LastActor->UnHighlightActor();
+		if (ThisActor) ThisActor->HighlightActor();
 	}
 }
 
@@ -183,7 +139,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	}
 	else
 	{
-		APawn* ControlledPawn = GetPawn();
+		const APawn* ControlledPawn = GetPawn();
 		// 如果滑鼠跟隨時間小於設置的點擊時長，則認為是點擊動作
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
@@ -195,8 +151,6 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				for (const FVector& PointLoc : NavPath->PathPoints)
 				{
 					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
-					// 繪製移動路線
-					DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
 				}
 
 				if (NavPath->PathPoints.Num() > 0)
@@ -237,11 +191,10 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		// 累加跟隨滑鼠的時間
 		FollowTime += GetWorld()->GetDeltaSeconds();
 
-		FHitResult Hit;
 		// 取得目前滑鼠的位置
-		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+		if (CursorHit.bBlockingHit)
 		{
-			CachedDestination = Hit.ImpactPoint;
+			CachedDestination = CursorHit.ImpactPoint;
 		}
 
 		// 計算滑鼠與角色的直線距離，並且normalize
