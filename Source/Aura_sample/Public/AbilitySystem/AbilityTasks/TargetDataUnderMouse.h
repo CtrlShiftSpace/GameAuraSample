@@ -30,4 +30,6 @@ private:
 	// 傳送滑鼠資訊
 	void SendMouseCursorData();
 
+	void OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag);
+
 };
