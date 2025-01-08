@@ -131,7 +131,6 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	// 如果是點擊到敵人則觸發能力
 	if (bTargeting)
 	{
-
 		if (GetASC())
 		{
 			GetASC()->AbilityInputTagHeld(InputTag);
