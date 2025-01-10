@@ -6,12 +6,18 @@
 #include "GameplayAbilities/Public/GameplayEffectTypes.h"
 #include "GameplayAbilities/Public/GameplayEffect.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "GameFramework/Character.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
 {
  	// 如果開啟(true)的話，每一幀會調用Tick()，這邊關閉(false)可以節省效能
 	PrimaryActorTick.bCanEverTick = false;
+
+	// 攝影機遮擋處理
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 
 	// 建立 component 要使用 CreateDefaultSubobject
 	// 帶入參數的SubobjectName的類型是FName，一般需要使用TEXT物件傳入，但仍可接受常規字串文字
