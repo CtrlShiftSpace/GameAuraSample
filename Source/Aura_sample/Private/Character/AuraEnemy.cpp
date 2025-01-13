@@ -17,7 +17,6 @@ AAuraEnemy::AAuraEnemy()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	AttributeSet = CreateDefaultSubobject<UAttributeSet>("AttributeSet");
-
 }
 
 void AAuraEnemy::HighlightActor()

@@ -8,6 +8,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
+#include "MotionWarpingComponent.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
@@ -30,6 +31,9 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	// 設定碰撞(無碰撞)
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// 建立 Motion Warping
+	MotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>("MotionWarping");
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
