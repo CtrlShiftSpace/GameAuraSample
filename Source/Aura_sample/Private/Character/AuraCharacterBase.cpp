@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 #include "MotionWarpingComponent.h"
+#include "Aura_sample/Aura_sample.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
@@ -19,6 +20,10 @@ AAuraCharacterBase::AAuraCharacterBase()
 	// 攝影機遮擋處理
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+
+	// Projectile 碰撞
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
 
 	// 建立 component 要使用 CreateDefaultSubobject
 	// 帶入參數的SubobjectName的類型是FName，一般需要使用TEXT物件傳入，但仍可接受常規字串文字

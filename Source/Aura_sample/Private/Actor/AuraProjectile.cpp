@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/AudioComponent.h"
+#include "Aura_sample/Aura_sample.h"
 
 AAuraProjectile::AAuraProjectile()
 {
@@ -15,6 +16,8 @@ AAuraProjectile::AAuraProjectile()
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	SetRootComponent(Sphere);
+	// 設定碰撞物件類型
+	Sphere->SetCollisionObjectType(ECC_Projectile);
 	// 啟用碰撞，但僅用查詢，所以物體不會阻擋，可用於重疊檢測
 	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	// 預設所有碰撞channel 為忽略
