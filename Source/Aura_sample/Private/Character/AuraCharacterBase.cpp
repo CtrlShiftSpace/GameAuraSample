@@ -19,6 +19,7 @@ AAuraCharacterBase::AAuraCharacterBase()
 
 	// 攝影機遮擋處理
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 
 	// Projectile 碰撞
