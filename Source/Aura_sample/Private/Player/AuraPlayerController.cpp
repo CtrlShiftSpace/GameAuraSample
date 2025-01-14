@@ -6,6 +6,14 @@
 #include "EnhancedInputSubsystems.h"
 #include "Interaction/EnemyInterface.h"
 #include "EnhancedInputComponent.h"
+#include "GameplayTagContainer.h"
+#include "Input/AuraInputComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "GameplayAbilities/Public/AbilitySystemBlueprintLibrary.h"
+#include "Components/SplineComponent.h"
+#include "AuraGameplayTags.h"
+#include "NavigationSystem.h"
+#include "NavigationPath.h"
 
 struct FInputAction;
 
@@ -13,6 +21,8 @@ AAuraPlayerController::AAuraPlayerController()
 {
 	// 當server更新值，發送到client端機制
 	bReplicates = true;
+
+	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
@@ -20,6 +30,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	CursorTrace();
+	AutoRun();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -55,9 +66,14 @@ void AAuraPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	// CastCheck當轉換失敗時會觸發Assertion，並且停止執行
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	// Shift 按下與放開事件
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::ShiftReleased);
+	// 綁定 Pressed/Released/Held 呼叫事件
+	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -78,7 +94,6 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 
 void AAuraPlayerController::CursorTrace()
 {
-	FHitResult CursorHit;
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit) {
 		return;
@@ -87,52 +102,133 @@ void AAuraPlayerController::CursorTrace()
 	LastActor = ThisActor;
 	ThisActor = CursorHit.GetActor();
 
-	/**
-	 * 情境分析
-	 * A. LastActor == null & ThisActor == null
-	 *		不處理
-	 * B. LastActor == null & ThisActor == Actor
-	 *		Highlight ThisActor
-	 * C. LastActor == Actor & ThisActor == null
-	 *		Unhighlight LastActor
-	 * D. LastActor == Actor & ThisActor == Actor & LastActor != ThisActor
-	 *		Unhighlight LastActor and Highlight ThisActor
-	 * E. LastActor == Actor & ThisActor == Actor & LastActor == ThisActor
-	 *		不處理
-	 */
-
-	if (LastActor == nullptr) 
+	if (LastActor != ThisActor)
 	{
-		if (ThisActor != nullptr)
+		if (LastActor) LastActor->UnHighlightActor();
+		if (ThisActor) ThisActor->HighlightActor();
+	}
+}
+
+void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	// 檢查室按下滑鼠左鍵
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = ThisActor ? true : false;
+		bAutoRunning = false;
+	}
+}
+
+void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC())
 		{
-			// Case B
-			ThisActor->HighlightActor();
-			
-		} 
-		else
+			GetASC()->AbilityInputTagReleased(InputTag);
+		}
+		return;
+	}
+
+	// 如果是點擊到敵人則觸發能力
+	if (GetASC()) { GetASC()->AbilityInputTagReleased(InputTag); }
+
+	if (!bTargeting && !bShiftKeyDown)
+	{
+		const APawn* ControlledPawn = GetPawn();
+		// 如果滑鼠跟隨時間小於設置的點擊時長，則認為是點擊動作
+		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
-			// Case A
+			// 建立導航路徑
+			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+			{
+				Spline->ClearSplinePoints();
+				// 依序取出導航設定的座標
+				for (const FVector& PointLoc : NavPath->PathPoints)
+				{
+					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+				}
+
+				if (NavPath->PathPoints.Num() > 0)
+				{
+					CachedDestination = NavPath->PathPoints.Last();
+					// 設定當前為自動移動
+					bAutoRunning = true;
+				}
+			}
+		}
+		FollowTime = 0.f;
+		bTargeting = false;
+	}
+}
+
+void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC()) 
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+		return;
+	}
+	
+	// 如果是點擊到敵人則觸發能力
+	if (bTargeting || bShiftKeyDown)
+	{
+		
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
 		}
 	}
-	else 
+	else
 	{
-		if (ThisActor == nullptr)
+		// 累加跟隨滑鼠的時間
+		FollowTime += GetWorld()->GetDeltaSeconds();
+
+		// 取得目前滑鼠的位置
+		if (CursorHit.bBlockingHit)
 		{
-			// Case C
-			LastActor->UnHighlightActor();
+			CachedDestination = CursorHit.ImpactPoint;
 		}
-		else 
+
+		// 計算滑鼠與角色的直線距離，並且normalize
+		if (APawn* ControlledPawn = GetPawn())
 		{
-			if (ThisActor != LastActor) 
-			{
-				// Case D
-				ThisActor->HighlightActor();
-				LastActor->UnHighlightActor();
-			}
-			else 
-			{
-				// Case E
-			}
+			const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+			ControlledPawn->AddMovementInput(WorldDirection);
+		}
+	}
+	
+}
+
+UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
+{
+	if (AuraAbilitySystemComponent == nullptr)
+	{
+		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return AuraAbilitySystemComponent;
+}
+
+void AAuraPlayerController::AutoRun()
+{
+	if (!bAutoRunning) return;
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		// 找到最接近的 spline 上的點，並返回該點的 FVector 座標
+		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+		// 取得角色在這個位置上應該移動的方向
+		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+		ControlledPawn->AddMovementInput(Direction);
+
+		// 計算路線到目標點的距離
+		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+		// 如果已經離目標點在可接受的距離，就停止自動移動
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
 		}
 	}
 }
