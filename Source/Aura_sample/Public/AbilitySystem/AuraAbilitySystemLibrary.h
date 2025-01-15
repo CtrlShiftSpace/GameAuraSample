@@ -8,6 +8,7 @@
 
 class UOverlayWidgetController;
 class UAttributeMenuWidgetController;
+class UEnemyWidgetController;
 
 /**
  * 
@@ -27,5 +28,8 @@ public:
 	// 取得 Attribute Menu Widget Controller
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
 
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|WidgetController")
+	// 取得 Enemy Widget Controller
+	static UEnemyWidgetController* GetEnemyWidgetController(const UObject* WorldContextObject);
 
 };

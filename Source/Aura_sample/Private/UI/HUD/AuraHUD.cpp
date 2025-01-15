@@ -5,6 +5,7 @@
 #include "UI/Widget/AuraUserWidget.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
+#include "UI/WidgetController/EnemyWidgetController.h"
 
 UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
 {
@@ -29,6 +30,18 @@ UAttributeMenuWidgetController* AAuraHUD::GetAttributeMenuWidgetController(const
 		AttributeMenuWidgetController->BindCallbacksToDependencies();
 	}
 	return AttributeMenuWidgetController;
+}
+
+UEnemyWidgetController* AAuraHUD::GetEnemyWidgetController(const FWidgetControllerParams& WCParams)
+{
+	// 檢查AttributeMenuWidgetController 存在，不存在就建立一個
+	if (EnemyWidgetController == nullptr)
+	{
+		EnemyWidgetController = NewObject<UEnemyWidgetController>(this, EnemyWidgetControllerClass);
+		EnemyWidgetController->SetWidgetControllerParams(WCParams);
+		EnemyWidgetController->BindCallbacksToDependencies();
+	}
+	return EnemyWidgetController;
 }
 
 void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
