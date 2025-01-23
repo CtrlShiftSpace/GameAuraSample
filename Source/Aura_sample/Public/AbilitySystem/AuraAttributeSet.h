@@ -154,6 +154,15 @@ public:
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana);
 
+
+	/* Meta Attributes */
+
+	// Meta 屬性不會被複製(Replicated)
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData InComingDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, InComingDamage);
+
+
 	// 當 Health 進行 Replication 執行的函式，需要是UFUNCTION
 	UFUNCTION()
 	// 當傳入舊的值時可以比較新舊變化

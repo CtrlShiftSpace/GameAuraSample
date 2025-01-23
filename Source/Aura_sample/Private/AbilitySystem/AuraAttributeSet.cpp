@@ -108,6 +108,22 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
 	}
+
+	if (Data.EvaluatedData.Attribute == GetInComingDamageAttribute())
+	{
+		// 取得Incoming屬性值
+		const float LocalIncomingDamage = GetInComingDamage();
+		SetInComingDamage(0.f);
+		if (LocalIncomingDamage > 0.f)
+		{
+			// 計算受到傷害後的生命值
+			const float NewHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+			// 確認數值是否非法
+			const bool bFatal = NewHealth <= 0.f;
+		}
+	}
 }
 
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
