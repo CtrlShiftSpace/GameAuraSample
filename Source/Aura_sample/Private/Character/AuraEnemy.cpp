@@ -9,6 +9,8 @@
 #include "Components/WidgetComponent.h"
 #include "UI/Widget/AuraUserWidget.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "AuraGameplayTags.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AAuraEnemy::AAuraEnemy()
 {
@@ -46,9 +48,16 @@ int32 AAuraEnemy::GetPlayerLevel()
 	return Level;
 }
 
+void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+}
+
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	InitAbilityActorInfo();
 
 	// 取得 UWidgetController 的 UUserWidget，並將其轉換成UAuraUserWidget
@@ -74,6 +83,17 @@ void AAuraEnemy::BeginPlay()
 			{
 				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			}
+		);
+	
+		// RegisterGameplayTagEvent 是用來對GameplayTag添加/移除的事件處理
+		// 當發現有接收到 GameplayTag 的變動時，就呼叫 HitReactTagChanged Function
+		AbilitySystemComponent->RegisterGameplayTagEvent
+		(
+			FAuraGameplayTags::Get().Effects_HitReact,
+			EGameplayTagEventType::NewOrRemoved
+		).AddUObject(
+			this,
+			&AAuraEnemy::HitReactTagChanged
 		);
 
 		// 作為 Initial Values 

@@ -25,6 +25,8 @@ public:
 	// 覆寫介面的GetAbilitySystemComponent
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; };
+
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	
 protected:
 	// 當遊戲開始或物件產生時觸發
@@ -73,5 +75,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 
 };
