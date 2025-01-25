@@ -27,6 +27,14 @@ public:
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; };
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+
+	virtual void Die() override;
+
+	// 處理角色死亡時，由Server將死亡事件分發到所有Client端
+	// NetMulticast : 會將此函式的執行請求傳送給所有客戶端，並經由客戶端的本地執行
+	// Reliable : 確保此事件不會因為網路延遲或丟封包而被忽略
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
 	
 protected:
 	// 當遊戲開始或物件產生時觸發
