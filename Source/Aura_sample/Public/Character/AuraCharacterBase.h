@@ -77,6 +77,24 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TObjectPtr<UMotionWarpingComponent> MotionWarping;
 
+	/* Dissolve Effects */
+
+	void Dissolve();
+
+	// 啟動一個溶解效果的時間軸，用於物件的漸漸消失（或出現）效果。
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	// 啟動一個溶解效果的時間軸，用於武器的漸漸消失（或出現）效果。
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+
 private:
 
 	// 具備的能力
