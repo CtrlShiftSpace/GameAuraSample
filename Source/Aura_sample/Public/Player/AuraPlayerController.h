@@ -16,6 +16,7 @@ class IEnemyInterface;
 class UAuraInputConfig;
 class UAuraAbilitySystemComponent;
 class USplineComponent;
+class UDamageTextComponent;
 
 /**
  * 
@@ -30,6 +31,10 @@ public:
 	AAuraPlayerController();
 	virtual void PlayerTick(float DeltaTime);
 
+	// Remote Procedure Call
+	// 此函式會由server端觸發，但只在特定client端上執行
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
 protected:
 	// 覆寫BeginPlay方法
 	virtual void BeginPlay() override;
@@ -83,5 +88,8 @@ private:
 	TObjectPtr<USplineComponent> Spline;
 
 	void AutoRun();
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
 };
