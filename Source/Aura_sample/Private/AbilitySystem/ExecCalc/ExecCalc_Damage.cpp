@@ -11,11 +11,13 @@ struct AuraDamageStatics
 {
 	// 處理Attribute Capture，描述了要捕獲的屬性是哪個
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetration);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(BlockChance);
 
 	AuraDamageStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, Armor, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArmorPenetration, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, BlockChance, Target, false);
 	}
 };
@@ -31,6 +33,7 @@ static const AuraDamageStatics& DamageStatics()
 UExecCalc_Damage::UExecCalc_Damage()
 {
 	RelevantAttributesToCapture.Add(DamageStatics().ArmorDef);
+	RelevantAttributesToCapture.Add(DamageStatics().ArmorPenetrationDef);
 	RelevantAttributesToCapture.Add(DamageStatics().BlockChanceDef);
 }
 
@@ -62,6 +65,21 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	// 檢視是否有機率減低傷害
 	const bool bBlocked = FMath::RandRange(0, 100) < TargetBlockChance;
 	Damage = bBlocked ? Damage / 2.f : Damage;
+
+	// 取得Armor
+	float TargetArmor = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, EvaluationParameters, TargetArmor);
+	TargetArmor = FMath::Max<float>(TargetArmor, 0.f);
+
+	// 取得ArmorPenetration
+	float SourceArmorPenetration = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationDef, EvaluationParameters, SourceArmorPenetration);
+	SourceArmorPenetration = FMath::Max<float>(SourceArmorPenetration, 0.f);
+
+	// 計算 (被攻擊對象防禦 - 攻擊對象破防攻擊力) 比例
+	const float EffectiveArmor = TargetArmor * (100 - SourceArmorPenetration * 0.25f ) / 100.f;
+	// 計算減傷率
+	Damage *= ( 100 - EffectiveArmor * 0.333f ) / 100.f;
 
 	// 用來儲存修改屬性數值的相關訊息
 	const FGameplayModifierEvaluatedData EvaluateData(UAuraAttributeSet::GetInComingDamageAttribute(), EGameplayModOp::Additive, Damage);
