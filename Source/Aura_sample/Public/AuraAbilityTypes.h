@@ -15,12 +15,12 @@ public:
 	/* Setter */
 
 	bool IsCriticalHit() const { return bIsCriticalHit; }
-	bool IsBlockHit() const { return bIsBlockHit; }
+	bool IsBlockedHit() const { return bIsBlockedHit; }
 
 	/* Getter */
 
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
-	void SetIsBlockHit(bool bInIsBlockHit) { bIsBlockHit = bInIsBlockHit; }
+	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
 
 
 	/** Returns the actual struct used for serialization, subclasses must override this! */
@@ -49,7 +49,7 @@ public:
 protected:
 
 	UPROPERTY()
-	bool bIsBlockHit = false;
+	bool bIsBlockedHit = false;
 
 	UPROPERTY()
 	bool bIsCriticalHit = false;

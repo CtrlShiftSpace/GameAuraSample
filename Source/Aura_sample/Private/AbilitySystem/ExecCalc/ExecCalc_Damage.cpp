@@ -8,6 +8,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
+#include "AuraAbilityTypes.h"
 
 // 這是 raw struct 僅作內部處理，因此不需要加上 F ，也不需要加上USTRUCT() 或 GENERATED_BODY 
 struct AuraDamageStatics
@@ -79,6 +80,11 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// 檢視是否有機率減低傷害
 	const bool bBlocked = FMath::RandRange(0, 100) < TargetBlockChance;
+
+	// 將 bBlocked 存入 AuraGameplayEffectContext
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
+
 	Damage = bBlocked ? Damage / 2.f : Damage;
 
 	// 取得Armor
@@ -130,6 +136,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	// 計算是否觸發爆擊
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance - TargetCriticalHitResisitance * CriticalHitResistanceCoefficient;
 	const bool bCriticalHit = FMath::RandRange(1, 100) < EffectiveCriticalHitChance;
+	UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 	
 	// 2倍傷害加上爆擊傷害
 	Damage = bCriticalHit ? 2.f * Damage + SourceCriticalHitDamage : Damage;
