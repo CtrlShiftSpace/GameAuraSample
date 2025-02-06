@@ -14,6 +14,8 @@
 #include "AuraGameplayTags.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
+#include "GameFramework/Character.h"
+#include "UI/Widget/DamageTextComponent.h"
 
 struct FInputAction;
 
@@ -31,6 +33,25 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 	CursorTrace();
 	AutoRun();
+}
+
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit)
+{
+	if (IsValid(TargetCharacter) && DamageTextComponentClass)
+	{
+		// 動態產生物件
+		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		// 讓引擎開始管理此物件
+		// 因為NewObject是在運行時創建出來的物件，所以需要手動呼叫 RegisterComponent 來完成註冊
+		// 若沒有調用則可能會有無法渲染、無法碰撞或觸發事件、Tick執行異常的狀況發生
+		// 另外在建構函式中使用 CreateDefaultSubobject 創建的物件，會自動被註冊，所以不需要呼叫註冊
+		DamageText->RegisterComponent();
+		// DamageText 的當前位置、旋轉和縮放將作為它相對於父物件的變動。
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		// 將其與父物件的相對位置分開，改以世界的位置顯示
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
+	}
 }
 
 void AAuraPlayerController::BeginPlay()

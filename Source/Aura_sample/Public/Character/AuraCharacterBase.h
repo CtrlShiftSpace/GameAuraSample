@@ -25,6 +25,16 @@ public:
 	// 覆寫介面的GetAbilitySystemComponent
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; };
+
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+
+	virtual void Die() override;
+
+	// 處理角色死亡時，由Server將死亡事件分發到所有Client端
+	// NetMulticast : 會將此函式的執行請求傳送給所有客戶端，並經由客戶端的本地執行
+	// Reliable : 確保此事件不會因為網路延遲或丟封包而被忽略
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
 	
 protected:
 	// 當遊戲開始或物件產生時觸發
@@ -60,12 +70,30 @@ protected:
 
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 	// 初始化預設的Attribute
-	void InitializeDefaultAttributes() const;
+	virtual void InitializeDefaultAttributes() const;
 
 	void AddCharacterAbilities();
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TObjectPtr<UMotionWarpingComponent> MotionWarping;
+
+	/* Dissolve Effects */
+
+	void Dissolve();
+
+	// 啟動一個溶解效果的時間軸，用於物件的漸漸消失（或出現）效果。
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	// 啟動一個溶解效果的時間軸，用於武器的漸漸消失（或出現）效果。
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 
 private:
 
@@ -73,5 +101,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 
 };

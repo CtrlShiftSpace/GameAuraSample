@@ -106,6 +106,16 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Input Tag for 4 key")
 	);
 
+	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage"),
+		FString("Damage")
+	);
+
+	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Effects.HitReact"),
+		FString("Effects HitReact")
+	);
+
 }
 
 // 提供靜態變數初始化，並分配記憶體位置
