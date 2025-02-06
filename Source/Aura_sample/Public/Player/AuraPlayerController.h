@@ -34,7 +34,7 @@ public:
 	// Remote Procedure Call
 	// 此函式會由server端觸發，但只在特定client端上執行
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
 protected:
 	// 覆寫BeginPlay方法
 	virtual void BeginPlay() override;
