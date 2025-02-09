@@ -129,6 +129,22 @@ public:
 	FGameplayAttributeData ManaRegeneration;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ManaRegeneration);
 
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ResistanceFire, Category = "Secondary Attributes")
+	FGameplayAttributeData ResistanceFire;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ResistanceFire);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ResistanceLightning, Category = "Secondary Attributes")
+	FGameplayAttributeData ResistanceLightning;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ResistanceLightning);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ResistanceArcade, Category = "Secondary Attributes")
+	FGameplayAttributeData ResistanceArcade;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ResistanceArcade);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ResistancePhysical, Category = "Secondary Attributes")
+	FGameplayAttributeData ResistancePhysical;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ResistancePhysical);
+
 
 	/**
 	 * Vital Attributes
@@ -212,6 +228,18 @@ public:
 
 	UFUNCTION()
 	void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
+
+	UFUNCTION()
+	void OnRep_ResistanceFire(const FGameplayAttributeData& OldResistanceFire) const;
+
+	UFUNCTION()
+	void OnRep_ResistanceLightning(const FGameplayAttributeData& OldResistanceLightning) const;
+
+	UFUNCTION()
+	void OnRep_ResistanceArcade(const FGameplayAttributeData& OldResistanceArcade) const;
+
+	UFUNCTION()
+	void OnRep_ResistancePhysical(const FGameplayAttributeData& OldResistancePhysical) const;
 
 private:
 	void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
