@@ -11,6 +11,9 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AuraGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AI/AuraAIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 
 AAuraEnemy::AAuraEnemy()
 {
@@ -25,6 +28,20 @@ AAuraEnemy::AAuraEnemy()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(GetRootComponent());
+}
+
+void AAuraEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// 只有Server才處理，因此玩家所看到敵人的行為都是透過 Replication
+	if (!HasAuthority())
+	{
+		return;
+	}
+	AuraAIController = Cast<AAuraAIController>(NewController);
+	AuraAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	AuraAIController->RunBehaviorTree(BehaviorTree);
 }
 
 void AAuraEnemy::HighlightActor()
