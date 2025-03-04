@@ -177,6 +177,15 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Effects HitReact")
 	);
 
+	/*
+	* Abilities
+	*/
+
+	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Attack"),
+		FString("Attack Ability Tag")
+	);
+	
 }
 
 // 提供靜態變數初始化，並分配記憶體位置
