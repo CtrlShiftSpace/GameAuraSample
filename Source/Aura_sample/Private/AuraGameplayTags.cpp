@@ -125,9 +125,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Lightning Damage Type")
 	);
 
-	GameplayTags.Damage_Arcade = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Damage.Arcade"),
-		FString("Arcade Damage Type")
+	GameplayTags.Damage_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Arcane"),
+		FString("Arcane Damage Type")
 	);
 
 	GameplayTags.Damage_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -149,9 +149,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Resistance to Lightning damage")
 	);
 
-	GameplayTags.Attributes_Resistance_Arcade = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attributes.Resistance.Arcade"),
-		FString("Resistance to Arcade damage")
+	GameplayTags.Attributes_Resistance_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Resistance.Arcane"),
+		FString("Resistance to Arcane damage")
 	);
 
 	GameplayTags.Attributes_Resistance_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -165,7 +165,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Fire, GameplayTags.Attributes_Resistance_Fire);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Lightning, GameplayTags.Attributes_Resistance_Lightning);
-	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Arcade, GameplayTags.Attributes_Resistance_Arcade);
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Arcane, GameplayTags.Attributes_Resistance_Arcane);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Physical, GameplayTags.Attributes_Resistance_Physical);
 
 	/*
@@ -177,6 +177,15 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Effects HitReact")
 	);
 
+	/*
+	* Abilities
+	*/
+
+	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Attack"),
+		FString("Attack Ability Tag")
+	);
+	
 }
 
 // 提供靜態變數初始化，並分配記憶體位置
