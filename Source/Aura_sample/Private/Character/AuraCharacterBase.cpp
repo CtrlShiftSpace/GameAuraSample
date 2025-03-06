@@ -54,6 +54,16 @@ void AAuraCharacterBase::Die()
 	MulticastHandleDeath();
 }
 
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	// 啟用武器物體的物理模擬和重力，讓武器自然下落並與環境互動
@@ -69,6 +79,7 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
+	bDead = true;
 }
 
 UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()

@@ -26,9 +26,13 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; };
 
+	/* Combat Interface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
-
 	virtual void Die() override;
+	virtual FVector GetCombatSocketLocation_Implementation() override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
+	/* End Combat Interface */
 
 	// 處理角色死亡時，由Server將死亡事件分發到所有Client端
 	// NetMulticast : 會將此函式的執行請求傳送給所有客戶端，並經由客戶端的本地執行
@@ -48,7 +52,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName WeaponTipSocketName;
 
-	virtual FVector GetCombatSocketLocation_Implementation() override;
+	bool bDead = false;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
