@@ -32,6 +32,7 @@ public:
 	virtual FVector GetCombatSocketLocation_Implementation() override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
+	virtual TArray<FTaggedMontage> GetAttackMontage_Implementation() override;
 	/* End Combat Interface */
 
 	// 處理角色死亡時，由Server將死亡事件分發到所有Client端
@@ -39,6 +40,9 @@ public:
 	// Reliable : 確保此事件不會因為網路延遲或丟封包而被忽略
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TArray<FTaggedMontage> AttackMontages;
 	
 protected:
 	// 當遊戲開始或物件產生時觸發

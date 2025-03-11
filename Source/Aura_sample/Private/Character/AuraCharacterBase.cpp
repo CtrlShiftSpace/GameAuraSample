@@ -64,6 +64,11 @@ AActor* AAuraCharacterBase::GetAvatar_Implementation()
 	return this;
 }
 
+TArray<FTaggedMontage> AAuraCharacterBase::GetAttackMontage_Implementation()
+{
+	return AttackMontages;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	// 啟用武器物體的物理模擬和重力，讓武器自然下落並與環境互動
