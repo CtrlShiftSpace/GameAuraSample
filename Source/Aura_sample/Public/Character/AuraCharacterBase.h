@@ -49,7 +49,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	// 使用UProperty實現Reflection
-	UPROPERTY(EditAnywhere, Category = "Combat")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	// TObjectPtr: TemplateClass wrapper around raw C++ Pointer
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
