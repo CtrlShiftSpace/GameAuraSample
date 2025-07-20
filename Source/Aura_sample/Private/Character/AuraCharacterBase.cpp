@@ -12,6 +12,7 @@
 #include "Aura_sample/Aura_sample.h"
 #include "AuraGameplayTags.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
@@ -91,6 +92,8 @@ FTaggedMontage AAuraCharacterBase::GetTaggedMontageByTag_Implementation(const FG
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
+	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
+	
 	// 啟用武器物體的物理模擬和重力，讓武器自然下落並與環境互動
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
