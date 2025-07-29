@@ -36,6 +36,7 @@ public:
 	virtual TArray<FTaggedMontage> GetAttackMontage_Implementation() override;
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
+	virtual int32 GetMinionCount_Implementation() override;
 	/* End Combat Interface */
 
 	// 處理角色死亡時，由Server將死亡事件分發到所有Client端
@@ -121,6 +122,10 @@ protected:
 	// 死亡時的音效
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	USoundBase* DeathSound;
+
+	/* Minions */
+	int32 MinionCount = 0;
+
 private:
 
 	// 具備的能力
