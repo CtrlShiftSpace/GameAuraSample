@@ -106,7 +106,9 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemCo
 	// 取得所有被賦予的能力，將其 Ability Info 再透過廣播方式傳遞給 Widget
 
 	FForeachAbility BroadcastDelegate;
-	BroadcastDelegate.BindLambda([this, AuraAbilitySystemComponent](const FGameplayAbilitySpec& AbilitySpec)
+	BroadcastDelegate.BindLambda(
+		[this, AuraAbilitySystemComponent](const FGameplayAbilitySpec& AbilitySpec)->
+		void
 		{
 			// 從 AbilitySpec 取得 Ability Tag，再利用此 Tag 從 AbilityInfo 資料表中取得對應的 Ability Info
 			FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AuraAbilitySystemComponent->GetAbilityTagFromSpec(AbilitySpec));
