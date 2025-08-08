@@ -25,6 +25,9 @@ void UAuraAbilitySystemComponent::AddCharacterAbilites(const TArray<TSubclassOf<
 			GiveAbility(AbilitySpec);
 		}
 	}
+	bStartupAbilitiesGiven = true;
+	// 發出廣播通知，表示已經給予了能力
+	AbilitiesGivenDelegate.Broadcast(this);
 }
 
 void UAuraAbilitySystemComponent::AbilityInputTagHeld(const FGameplayTag& InputTag)

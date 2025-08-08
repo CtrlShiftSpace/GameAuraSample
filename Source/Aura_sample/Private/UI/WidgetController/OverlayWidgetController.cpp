@@ -57,26 +57,50 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			}
 		);
 
-	// 增加當EffectAssetTags呼叫Broadcast時執行的程式
-	// 之所以使用Lambda是能簡化還要定義funciton名稱並指定的情況，相當於匿名function
-	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda
-	(
-		[this](const FGameplayTagContainer& AssetTags)->
-		void{
-			for (const FGameplayTag Tag : AssetTags)
+	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		if (AuraASC->bStartupAbilitiesGiven)
+		{
+			// 如果已經給予了Abilities，則直接呼叫函式
+			OnInitializeStartupAbilities(AuraASC);
+		}
+		else
+		{
+			// 增加當AbilitiesGivenDelegate呼叫Broadcast時執行的程式
+			AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
+		}
+		
+		// 增加當EffectAssetTags呼叫Broadcast時執行的程式
+		// 之所以使用Lambda是能簡化還要定義funciton名稱並指定的情況，相當於匿名function
+		AuraASC->EffectAssetTags.AddLambda
+		(
+			[this](const FGameplayTagContainer& AssetTags)->
+			void
 			{
-				// 假設Tag = Message.HealthPotion
-				// 則 "Message.HealthPotion".MatchesTag("Message") 結果為 true
-				// "Message".MatchesTag("Message.HealthPotion") 結果為 false
-				FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
-				// 檢查是否符合Tag判斷，也就是當Tag只有在有Message才會執行以下內容
-				if (Tag.MatchesTag(MessageTag))
+				for (const FGameplayTag Tag : AssetTags)
 				{
-					// 使用Lambda 會無法直接呼叫該成員的函式，需在上方使用this才能知道傳入的類別
-					const FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
-					OnMessageWidgetRow.Broadcast(*Row);
+					// 假設Tag = Message.HealthPotion
+					// 則 "Message.HealthPotion".MatchesTag("Message") 結果為 true
+					// "Message".MatchesTag("Message.HealthPotion") 結果為 false
+					FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
+					// 檢查是否符合Tag判斷，也就是當Tag只有在有Message才會執行以下內容
+					if (Tag.MatchesTag(MessageTag))
+					{
+						// 使用Lambda 會無法直接呼叫該成員的函式，需在上方使用this才能知道傳入的類別
+						const FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+						OnMessageWidgetRow.Broadcast(*Row);
+					}
 				}
 			}
-		}
-	);
+		);
+	}
+}
+
+void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent)
+{
+	if (!AuraAbilitySystemComponent->bStartupAbilitiesGiven)
+	{
+		return;
+	}
+	// TODO 取得所有被賦予的能力，將其 Ability Info 再透過廣播方式傳遞給 Widget
 }
