@@ -38,6 +38,8 @@ public:
 
 protected:
 
+	virtual void OnRep_ActivateAbilities() override;
+
 	// 標記函數為RPC，這邊為 Client RPC，從伺服器呼叫，並在指定的客戶端上執行。
 	UFUNCTION(Client, Reliable)
 	void ClientEffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
