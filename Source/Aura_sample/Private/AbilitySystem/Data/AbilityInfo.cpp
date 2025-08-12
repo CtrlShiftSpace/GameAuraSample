@@ -16,7 +16,7 @@ FAuraAbilityInfo UAbilityInfo::FindAbilityInfoForTag(const FGameplayTag& Ability
 
 	if (bLogNotFound)
 	{
-		UE_LOG(LogAura, Error, TEXT("¶b AbilityInfo [%s] §§ß‰§£®Ï¶π AbilityTag [%s]"), *GetNameSafe(this), *AbilityTag.ToString());
+		UE_LOG(LogAura, Error, TEXT("Âú® AbilityInfo [%s] ‰∏≠Êâæ‰∏çÂà∞Ê≠§ AbilityTag [%s]"), *GetNameSafe(this), *AbilityTag.ToString());
 	}
 
 	return FAuraAbilityInfo();

@@ -16,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCooldownChangeSignature, float, T
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, meta = (ExposedAsyncProxy = "AsyncTask"))
 class AURA_SAMPLE_API UWaitCooldownChange : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
@@ -28,11 +28,10 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnCooldownChangeSignature CooldownEnd;
 
-	// ©w∏q§∫≥°®œ•Œ®Áº∆
+	// ÂÆöÁæ©ÂÖßÈÉ®‰ΩøÁî®ÂáΩÊï∏
 	UFUNCTION(BlueprintCallable, meta = (BlueprintInternalUseOnly = "true"))
 	static UWaitCooldownChange* WaitForCooldownChange(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& InCooldownTag);
-
-	// µ≤ßÙTask
+	// ÁµêÊùüTask
 	UFUNCTION(BlueprintCallable)
 	void EndTask();
 
