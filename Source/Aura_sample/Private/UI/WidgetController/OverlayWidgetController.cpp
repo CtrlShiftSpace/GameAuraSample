@@ -5,6 +5,8 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
+#include "Player/AuraPlayerState.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
@@ -18,8 +20,11 @@ void UOverlayWidgetController::BroadcastInitialValues()
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
+	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPlayerState->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+	
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
-
+	
 	// 設定Health值改變時的處理
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		AuraAttributeSet->GetHealthAttribute()
@@ -116,4 +121,33 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemCo
 			OnAbilityInfo.Broadcast(Info);
 		});
 	AuraAbilitySystemComponent->ForEachAbility(BroadcastDelegate);
+}
+
+void UOverlayWidgetController::OnXPChanged(int32 NewXP) const
+{
+	// 將 PlayerState 轉換為 AAuraPlayerState
+	AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(PlayerState);
+	// 透過 AuraPlayerState 取得 LevelUpInfo
+	const ULevelUpInfo* LevelUpInfo = AuraPlayerState->LevelUpInfo;
+	// 檢查 LevelUpInfo 是否有效，並且出錯時會顯示相關訊息
+	checkf(LevelUpInfo, TEXT("無法找到 LevelUpInfo，請在 BP_AuraPlayerState 中設定 LevelUpInfo。"));
+	// 透過目前經驗值取得當前等級
+	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);
+	// 取得遊戲中最大等級
+	int32 MaxLevel = LevelUpInfo->LevelUpInformation.Num();
+
+	if (Level <= MaxLevel && Level > 0)
+	{
+		// 僅計算該等級所需的經驗值量
+		const int32 LevelUpRequirement = LevelUpInfo->LevelUpInformation[Level].LevelUpRequirement;
+		const int32 PreviousLevelUpRequirement = LevelUpInfo->LevelUpInformation[Level - 1].LevelUpRequirement;
+		const int32 DeltaLevelUpRequirement = LevelUpRequirement - PreviousLevelUpRequirement;
+		
+		// 計算目前經驗值的百分比
+		const int32 XPForThisLevel = NewXP - PreviousLevelUpRequirement;
+		// 使用 static_cast 將 in32 轉換為 float，以便進行百分比計算
+		const float XPBarPercent = static_cast<float>(XPForThisLevel) / static_cast<float>(DeltaLevelUpRequirement);
+
+		OnXPPercentChangedDelegate.Broadcast(XPBarPercent);
+	}
 }

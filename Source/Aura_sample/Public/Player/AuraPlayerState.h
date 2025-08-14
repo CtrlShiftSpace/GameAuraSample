@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "AuraPlayerState.generated.h"
 
+class ULevelUpInfo;
 class UAbilitySystemComponent;
 class UAttributeSet;
 
@@ -27,6 +28,10 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<ULevelUpInfo> LevelUpInfo;
+	
 	// 使用 FORCEINLINE 可以避免頻繁調用的開銷
 	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
 	FORCEINLINE int32 GetXP() const { return XP; }

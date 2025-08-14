@@ -37,6 +37,6 @@ public:
 	TArray<FAuraLevelUpInfo> LevelUpInformation;
 
 	// 藉由經驗值取得等級
-	int32 FindLevelForXP(float XP);
+	int32 FindLevelForXP(float XP) const;
 
 };
