@@ -179,3 +179,15 @@ bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondAc
 	const bool bFriends = bBothArePlayers || bBothAreEnemies;
 	return !bFriends;
 }
+
+float UAuraAbilitySystemLibrary::GetXPForCharacterClassLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)
+{
+	// 根據傳入的 CharacterClass，取得對應的FCharacterClassDefaultInfo物件
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	if (CharacterClassInfo == nullptr)
+	{
+		return 0.f;
+	}
+	FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	return ClassDefaultInfo.XPValue.GetValueAtLevel(Level);
+}

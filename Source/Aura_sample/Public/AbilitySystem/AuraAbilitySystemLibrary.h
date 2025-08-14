@@ -56,4 +56,8 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
 	static bool IsNotFriend(AActor* FirstActor, AActor* SecondActor);
+
+	// 取得敵人類型與等級所對應的經驗值
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
+	static float GetXPForCharacterClassLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int Level);
 };

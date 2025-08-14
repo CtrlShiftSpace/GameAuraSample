@@ -93,6 +93,11 @@ void AAuraEnemy::Die()
 	Super::Die();
 }
 
+ECharacterClass AAuraEnemy::GetCharacterClass_Implementation() const
+{
+	return CharacterClass;
+}
+
 void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
