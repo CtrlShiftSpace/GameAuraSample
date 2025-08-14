@@ -21,6 +21,7 @@ class AURA_SAMPLE_API AAuraProjectile : public AActor
 public:	
 	AAuraProjectile();
 
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
@@ -33,6 +34,9 @@ protected:
 	UFUNCTION()
 	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USphereComponent> Sphere;
+
 private:
 
 	// 存活在畫面中的時間
@@ -40,9 +44,6 @@ private:
 	float LifeSpan = 15.f;
 
 	bool bHit = false;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USphereComponent> Sphere;
 
 	// 衝擊的粒子效果
 	UPROPERTY(EditAnywhere)

@@ -8,7 +8,10 @@
 #include "GameplayTagContainer.h"
 #include "OverlayWidgetController.generated.h"
 
+class ULevelUpInfo;
 class UAuraUserWidget;
+class UAbilityInfo;
+class UAuraAbilitySystemComponent;
 
 USTRUCT(BlueprintType)
 struct FUIWidgetRow : public FTableRowBase
@@ -34,6 +37,7 @@ struct FOnAttributeChangeData;
 // 使用動態多播委託，相當於藍圖中的EventDispatcher(事件調度器)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMessageWidgetRowSignature, FUIWidgetRow, Row);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityInfoSignature, const FAuraAbilityInfo&, Info);
 
 /**
  * 
@@ -62,13 +66,26 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
 	FOnMessageWidgetRowSignature OnMessageWidgetRow;
 
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
+	FOnAbilityInfoSignature OnAbilityInfo;
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
+	FOnAttributeChangedSignature OnXPPercentChangedDelegate;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
+	
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
+
+	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent);
+
+	void OnXPChanged(int32 NewXP) const;
 };
 
 template<typename T>
