@@ -184,6 +184,10 @@ public:
 	FGameplayAttributeData InComingDamage;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, InComingDamage);
 
+	// 經驗值
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData InComingXP;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, InComingXP);
 
 	// 當 Health 進行 Replication 執行的函式，需要是UFUNCTION
 	UFUNCTION()
