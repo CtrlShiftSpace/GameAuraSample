@@ -140,7 +140,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			const float NewHealth = GetHealth() - LocalIncomingDamage;
 			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
 
-			// 確認數值是否非法
+			// 確認此傷害是否致命
 			const bool bFatal = NewHealth <= 0.f;
 			if (bFatal)
 			{
@@ -149,6 +149,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				{
 					CombatInterface->Die();
 				}
+				SendXPEvent(Props);
 			}
 			else
 			{
@@ -167,7 +168,6 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	{
 		const float LocalIncomingXP = GetInComingXP();
 		SetInComingXP(0.f);
-		UE_LOG(LogAura, Log, TEXT("InComing XP: %f"), LocalIncomingXP);
 	}
 }
 
@@ -338,5 +338,26 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, CriticalHit);
 			return;
 		}
+	}
+}
+
+void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
+{
+	// 透過 CombatInterface 取得等級與角色類型
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+	{
+		const int32 TargetLevel = CombatInterface->GetPlayerLevel();
+		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+		// 從等級與角色類型取得經驗值
+		int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
+
+		// 取得所有 Gameplay Tag
+		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+		// 定義 Event Data
+		FGameplayEventData Payload;
+		Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;
+		Payload.EventMagnitude = XPReward;
+		// 傳遞 GameplayEvent 到 Actor
+		UAbilitySystemBlueprintLibrary:: SendGameplayEventToActor(Props.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
 	}
 }
