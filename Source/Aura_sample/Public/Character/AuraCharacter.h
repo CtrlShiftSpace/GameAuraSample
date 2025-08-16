@@ -6,13 +6,14 @@
 #include "Character/AuraCharacterBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Interaction/PlayerInterface.h"
 #include "AuraCharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AURA_SAMPLE_API AAuraCharacter : public AAuraCharacterBase
+class AURA_SAMPLE_API AAuraCharacter : public AAuraCharacterBase, public IPlayerInterface
 {
 	GENERATED_BODY()
 	
@@ -21,6 +22,10 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
+	/** Player Interface */
+	virtual void AddToXP_Implementation(int32 InXP) override;
+	/** end Player Interface */
+	
 	/** Combat Interface */
 	virtual int32 GetPlayerLevel() override;
 	/** end Combat Interface */

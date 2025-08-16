@@ -23,7 +23,6 @@ int32 ULevelUpInfo::FindLevelForXP(float XP) const
 		{
 			bSearching = false;
 		}
-		Level++;
 	}
 	return Level;
 }

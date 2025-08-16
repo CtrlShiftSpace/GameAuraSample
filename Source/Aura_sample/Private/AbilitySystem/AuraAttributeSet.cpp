@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura_sample/AuraLogChannels.h"
+#include "Interaction/PlayerInterface.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -168,6 +169,14 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	{
 		const float LocalIncomingXP = GetInComingXP();
 		SetInComingXP(0.f);
+
+		// TODO: 確認是否需要升級
+		
+		// 如果有來源角色有實作 PlayerInterface 介面才執行 AddToXP
+		if (Props.SourceCharacter->Implements<UPlayerInterface>())
+		{
+			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
+		}
 	}
 }
 
@@ -358,6 +367,6 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 		Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;
 		Payload.EventMagnitude = XPReward;
 		// 傳遞 GameplayEvent 到 Actor
-		UAbilitySystemBlueprintLibrary:: SendGameplayEventToActor(Props.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
 	}
 }
