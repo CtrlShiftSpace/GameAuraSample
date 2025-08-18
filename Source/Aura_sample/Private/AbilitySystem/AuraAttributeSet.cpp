@@ -9,9 +9,7 @@
 #include "AuraGameplayTags.h"
 #include "Interaction/CombatInterface.h"
 #include "Player/AuraPlayerController.h"
-#include "Kismet/GameplayStatics.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
-#include "Aura_sample/AuraLogChannels.h"
 #include "Interaction/PlayerInterface.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -172,9 +170,34 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 
 		// TODO: 確認是否需要升級
 		
+		// SourceCharacter 是擁有此 AttributeSet 角色，透過 GA_ListenForEvents 接收到 GE_EventBasedEffect 所傳遞的 IncomingXP
 		// 如果有來源角色有實作 PlayerInterface 介面才執行 AddToXP
-		if (Props.SourceCharacter->Implements<UPlayerInterface>())
+		if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
 		{
+			// 目前的等級與經驗值
+			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+			// 加入經驗值後的等級
+			const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
+			// 所升的等級
+			const int32 NumOfLevelups = NewLevel - CurrentLevel;
+			if (NumOfLevelups > 0)
+			{
+				// TODO: 取得 AttributePointReward 和 SpellPointsReward
+				// 升級後除了等級提升，也要處理技能點的增加與回覆 HP 與 MP
+				const int32 AttributePortsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
+				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
+
+				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumOfLevelups);
+				IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePortsReward);
+				IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
+
+				// 回滿生命值與魔力值
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+
+				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+			}
 			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
 		}
 	}
