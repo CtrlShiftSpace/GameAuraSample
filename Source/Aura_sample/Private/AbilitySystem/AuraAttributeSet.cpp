@@ -353,9 +353,9 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 {
 	// 透過 CombatInterface 取得等級與角色類型
-	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+	if (Props.TargetAvatarActor->Implements<UCombatInterface>())
 	{
-		const int32 TargetLevel = CombatInterface->GetPlayerLevel();
+		const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetAvatarActor);
 		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
 		// 從等級與角色類型取得經驗值
 		int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
