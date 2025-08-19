@@ -58,7 +58,7 @@ private:
 
 	// 玩家等級
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Level)
-	int32 Level = 5;
+	int32 Level = 1;
 
 	// 玩家經驗值
 	UPROPERTY(VisibleAnywhere, Replicated = OnRep_XP)
