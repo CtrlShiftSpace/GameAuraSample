@@ -61,7 +61,7 @@ private:
 	int32 Level = 1;
 
 	// 玩家經驗值
-	UPROPERTY(VisibleAnywhere, Replicated = OnRep_XP)
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_XP)
 	int32 XP = 0;
 
 	UFUNCTION()

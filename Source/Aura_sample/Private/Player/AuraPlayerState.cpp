@@ -61,11 +61,11 @@ void AAuraPlayerState::AddToLevel(int32 InLevel)
 void AAuraPlayerState::OnRep_Level(int32 OldLevel)
 {
 	// 在 Client 端也要執行 Broadcast
-	OnLevelChangedDelegate.Broadcast(XP);
+	OnLevelChangedDelegate.Broadcast(Level);
 }
 
 void AAuraPlayerState::OnRep_XP(int32 OldXP)
 {
 	// 在 Client 端也要執行 Broadcast
-	OnXPChangedDelegate.Broadcast(Level);
+	OnXPChangedDelegate.Broadcast(XP);
 }
