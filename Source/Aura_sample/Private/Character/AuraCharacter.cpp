@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Player/AuraPlayerState.h"
 #include "AbilitySystemComponent.h"
+#include "NiagaraComponent.h"
 #include "UI/HUD/AuraHUD.h"
 #include "Player/AuraPlayerController.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
@@ -18,12 +19,20 @@ AAuraCharacter::AAuraCharacter()
 	CharacterSpringArm->bInheritPitch = false;
 	CharacterSpringArm->bInheritRoll = false;
 	CharacterSpringArm->bInheritYaw = false;
+	CharacterSpringArm->SetUsingAbsoluteRotation(true);
+	CharacterSpringArm->bDoCollisionTest = false;
 	CharacterSpringArm->SetupAttachment(GetCapsuleComponent(), FName("CharacterSpringArm"));
 
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComponent");
+	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	// 避免自動啟動特效
+	LevelUpNiagaraComponent->bAutoActivate = false;
+	
 	// 建立攝影機
 	CharacterCamera = CreateDefaultSubobject<UCameraComponent>("CharacterCamera");
-	CharacterCamera->SetupAttachment(CharacterSpringArm, FName("CharacterCamera"));
-
+	CharacterCamera->SetupAttachment(CharacterSpringArm, USpringArmComponent::SocketName);
+	CharacterCamera->bUsePawnControlRotation = false;
+	
 	// 設定角色移動面對方向也會跟著移動
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
@@ -65,7 +74,23 @@ void AAuraCharacter::AddToXP_Implementation(int32 InXP)
 
 void AAuraCharacter::LevelUp_Implementation()
 {
-	
+	MulticastLevelUpParticles();
+}
+
+void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
+{
+	if (IsValid(LevelUpNiagaraComponent))
+	{
+		// 取得相機位置
+		const FVector CameraLocation = CharacterCamera->GetComponentLocation();
+		// 取得粒子效果位置
+		const FVector NiagaraSystemLocation = LevelUpNiagaraComponent->GetComponentLocation();
+		// 計算從粒子效果位置到相機位置的方向
+		// 並將其轉換為旋轉角度確保粒子效果面向相機
+		const FRotator ToCameraRotation = (CameraLocation - NiagaraSystemLocation).Rotation();
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
 
 int32 AAuraCharacter::GetXP_Implementation() const
