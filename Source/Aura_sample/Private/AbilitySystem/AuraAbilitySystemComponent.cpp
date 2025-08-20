@@ -2,10 +2,13 @@
 
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 #include "GameplayAbilities/Public/GameplayAbilitySpec.h"
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "Aura_sample/AuraLogChannels.h"
+#include "Interaction/PlayerInterface.h"
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -113,6 +116,37 @@ FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 		}
 	}
 	return FGameplayTag(); // 如果沒有找到符合的 Tag，則回傳一個無效的 Tag
+}
+
+void UAuraAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	// 擁有此 Ability System Component 的 AvatarActor 是否實作了 PlayerInterface
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		// 檢查屬性點數是否大於0，只有大於0才能夠執行升級
+		if (IPlayerInterface::Execute_GetAttributePoints(GetAvatarActor()) > 0)
+		{
+			// 由 Server 處理升級
+			ServerUpgradeAttribute(AttributeTag);
+		}
+	}
+}
+
+void UAuraAbilitySystemComponent::ServerUpgradeAttribute_Implementation(const FGameplayTag& AttributeTag)
+{
+	// 建立 Gameplay Event 
+	FGameplayEventData Payload;
+	Payload.EventTag = AttributeTag;
+	Payload.EventMagnitude = 1.f;
+
+	// 透過 Ability System Blueprint Library 發送 Gameplay Event 到 AvatarActor
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(), AttributeTag, Payload);
+
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		// 升級後減去屬性點數
+		IPlayerInterface::Execute_AddToAttributePoints(GetAvatarActor(), -1);
+	}
 }
 
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
