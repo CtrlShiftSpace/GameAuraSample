@@ -35,7 +35,6 @@ struct FOnAttributeChangeData;
 
 // 後綴增加Signature是為了辨別是用來deletgate
 // 使用動態多播委託，相當於藍圖中的EventDispatcher(事件調度器)
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMessageWidgetRowSignature, FUIWidgetRow, Row);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityInfoSignature, const FAuraAbilityInfo&, Info);

@@ -25,6 +25,8 @@ void AAuraPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 	DOREPLIFETIME(AAuraPlayerState, Level);
 	DOREPLIFETIME(AAuraPlayerState, XP);
+	DOREPLIFETIME(AAuraPlayerState, AttributePoints);
+	DOREPLIFETIME(AAuraPlayerState, SpellPoints);
 }
 
 UAbilitySystemComponent* AAuraPlayerState::GetAbilitySystemComponent() const
@@ -58,6 +60,20 @@ void AAuraPlayerState::AddToLevel(int32 InLevel)
 	OnLevelChangedDelegate.Broadcast(Level);
 }
 
+void AAuraPlayerState::AddToAttributePoints(int32 InAttributePoints)
+{
+	AttributePoints += InAttributePoints;
+	// Server 端執行 Broadcast
+	OnAttributePointsChangedDelegate.Broadcast(InAttributePoints);
+}
+
+void AAuraPlayerState::AddToSpellPoints(int32 InSpellPoints)
+{
+	SpellPoints += InSpellPoints;
+	// Server 端執行 Broadcast
+	OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
+}
+
 void AAuraPlayerState::OnRep_Level(int32 OldLevel)
 {
 	// 在 Client 端也要執行 Broadcast
@@ -68,4 +84,16 @@ void AAuraPlayerState::OnRep_XP(int32 OldXP)
 {
 	// 在 Client 端也要執行 Broadcast
 	OnXPChangedDelegate.Broadcast(XP);
+}
+
+void AAuraPlayerState::OnRep_AttributePoints(int32 OldAttributePoints)
+{
+	// 在 Client 端也要執行 Broadcast
+	OnAttributePointsChangedDelegate.Broadcast(AttributePoints);
+}
+
+void AAuraPlayerState::OnRep_SpellPoints(int32 OldSpellPoints)
+{
+	// 在 Client 端也要執行 Broadcast
+	OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
 }

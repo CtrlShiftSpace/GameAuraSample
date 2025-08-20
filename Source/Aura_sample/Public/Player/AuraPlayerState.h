@@ -35,17 +35,25 @@ public:
 	// 使用 FORCEINLINE 可以避免頻繁調用的開銷
 	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
 	FORCEINLINE int32 GetXP() const { return XP; }
+	FORCEINLINE int32 GetAttributePoints() const { return AttributePoints; }
+	FORCEINLINE int32 GetSpellPoints() const { return SpellPoints; }
 
 	void SetXP(int32 InXP);
 	void SetLevel(int32 InLevel);
 	
 	void AddToXP(int32 InXP);
 	void AddToLevel(int32 InLevel);
+	void AddToAttributePoints(int32 InAttributePoints);
+	void AddToSpellPoints(int32 InSpellPoints);
 
 	// XP 改變的 Delegate
 	FOnPlayerStatChanged OnXPChangedDelegate;
 	// 等級改變的 Delegate
 	FOnPlayerStatChanged OnLevelChangedDelegate;
+	// 屬性點數改變的 Delegate
+	FOnPlayerStatChanged OnAttributePointsChangedDelegate;
+	// 技能點數改變的 Delegate
+	FOnPlayerStatChanged OnSpellPointsChangedDelegate;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -63,10 +71,23 @@ private:
 	// 玩家經驗值
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_XP)
 	int32 XP = 0;
+	
+	// 玩家屬性點數
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_AttributePoints)
+	int32 AttributePoints = 0;
+
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_SpellPoints)
+	int32 SpellPoints = 0;
 
 	UFUNCTION()
 	void OnRep_Level(int32 OldLevel);
 
 	UFUNCTION()
 	void OnRep_XP(int32 OldXP);
+
+	UFUNCTION()
+	void OnRep_AttributePoints(int32 OldAttributePoints);
+
+	UFUNCTION()
+	void OnRep_SpellPoints(int32 OldSpellPoints);
 };
