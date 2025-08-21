@@ -67,9 +67,10 @@ public:
 	// 覆寫PreAttributeChange方法，用來在屬性值改變之前進行預處理
 	// 但不要在這邊處理遊戲邏輯或觸發相關事件
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
-
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
-
+	// 當某一個單一屬性改變 (BaseValue + Modifiers 最終結果) 時觸發
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+	
 	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagToAttributes;
 	
 
@@ -255,4 +256,7 @@ private:
 	void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool CriticalHit) const;
 	void SendXPEvent(const FEffectProperties& Props);
+	// 是否需要回滿生命值或魔力值
+	bool bTopOffHealth = false;
+	bool bTopOffMana = false;
 };
