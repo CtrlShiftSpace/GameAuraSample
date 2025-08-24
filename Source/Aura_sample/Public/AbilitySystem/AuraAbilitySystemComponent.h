@@ -8,7 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /*AssetTags*/);
 // 用來在當被賦予能力時，發出廣播用途
-DECLARE_MULTICAST_DELEGATE_OneParam(FAbilitiesGiven, UAuraAbilitySystemComponent*);
+DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 // 用來遍歷所有能力
 DECLARE_DELEGATE_OneParam(FForeachAbility, const FGameplayAbilitySpec&);
 
