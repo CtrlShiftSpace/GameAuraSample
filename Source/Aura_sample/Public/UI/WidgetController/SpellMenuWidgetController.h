@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class AURA_SAMPLE_API USpellMenuWidgetController : public UAuraWidgetController
 {
 	GENERATED_BODY()
