@@ -20,6 +20,10 @@ struct FAuraAbilityInfo
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag InputTag = FGameplayTag();
 
+	// 能力狀態的 Tag
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag StatusTag = FGameplayTag();
+
 	// 判斷冷卻狀態的 Tag
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag CooldownTag = FGameplayTag();

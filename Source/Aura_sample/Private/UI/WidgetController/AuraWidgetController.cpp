@@ -43,6 +43,7 @@ void UAuraWidgetController::BroadcastAbilityInfo()
 			// 從 AbilitySpec 取得 Ability Tag，再利用此 Tag 從 AbilityInfo 資料表中取得對應的 Ability Info
 			FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AuraAbilitySystemComponent->GetAbilityTagFromSpec(AbilitySpec));
 			Info.InputTag = AuraAbilitySystemComponent->GetInputTagFromSpec(AbilitySpec);
+			Info.StatusTag = AuraAbilitySystemComponent->GetStatusFromSpec(AbilitySpec);
 			OnAbilityInfo.Broadcast(Info);
 		});
 	GetAuraASC()->ForEachAbility(BroadcastDelegate);
