@@ -201,6 +201,8 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatus(int32 Level)
 			GiveAbility(AbilitySpec);
 			// 強制標記目前的 Gameplay Ability Spec 而不是等到下一幀再處理
 			MarkAbilitySpecDirty(AbilitySpec);
+			// 通知 Client 更新目前 Ability 的狀態
+			ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible);
 		}
 	}
 }
@@ -214,6 +216,11 @@ void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 		bStartupAbilitiesGiven = true;
 		AbilitiesGivenDelegate.Broadcast();
 	}
+}
+
+void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
+{
+	AbilityStatusChanged.Broadcast(AbilityTag, StatusTag);
 }
 
 // 因為這個是定義為 RPC 函數，所以需要在函數名稱後面加上 _Implementation
