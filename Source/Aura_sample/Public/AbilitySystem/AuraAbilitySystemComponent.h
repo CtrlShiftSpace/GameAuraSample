@@ -12,7 +12,7 @@ DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 // 用來遍歷所有能力
 DECLARE_DELEGATE_OneParam(FForeachAbility, const FGameplayAbilitySpec&);
 // 用來處理技能改變時的資訊傳遞
-DECLARE_MULTICAST_DELEGATE_TwoParams(FAbilityStatusChanged, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*Status Tag*/);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FAbilityStatusChanged, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*Status Tag*/, int32 /*AbilityLevel*/);
 
 /**
  * 
@@ -49,6 +49,10 @@ public:
 	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
 
 	void UpdateAbilityStatus(int32 Level);
+
+	// 由 client 呼叫，並在 server 端執行花費技能點數動作
+	UFUNCTION(Server, Reliable)
+	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
 protected:
 
 	virtual void OnRep_ActivateAbilities() override;
@@ -58,5 +62,5 @@ protected:
 	void ClientEffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
 
 	UFUNCTION(Client, Reliable)
-	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag);
+	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, int32 AbilityLevel);
 };

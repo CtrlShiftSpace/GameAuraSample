@@ -42,6 +42,10 @@ public:
 	// 選到特定 AbilityTag 的技能按鈕
 	UFUNCTION(BlueprintCallable)
 	void SpellGlobeSelected(const FGameplayTag& AbilityTag);
+
+	// 按下花費技能點數按鈕
+	UFUNCTION(BlueprintCallable)
+	void SpendPointButtonPressed();
 private:
 	
 	static void ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints, bool& bShouldEnableSpellPointsButton, bool& bShouldEnableEquipButton);
