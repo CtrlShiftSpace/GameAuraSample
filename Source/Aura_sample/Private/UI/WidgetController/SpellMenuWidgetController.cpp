@@ -20,6 +20,16 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 	GetAuraASC()->AbilityStatusChanged.AddLambda(
 		[this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
 		{
+			// 如果選擇的技能能力的狀態發生變化，更新按鈕啟用狀態
+			if (SelectedAbility.Ability.MatchesTagExact(AbilityTag))
+			{
+				SelectedAbility.Status = StatusTag;
+				bool bEnabledSpendPoints = false;
+				bool bEnabledEquip = false;
+				ShouldEnableButtons(StatusTag, CurrentSpellPoints, bEnabledSpendPoints, bEnabledEquip);
+				SpellGlobeSelectedDelegate.Broadcast(bEnabledSpendPoints, bEnabledEquip);
+			}
+
 			if (AbilityInfo)
 			{
 				FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
@@ -32,7 +42,15 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 	GetAuraPS()->OnSpellPointsChangedDelegate.AddLambda(
 		[this](int32 Points)
 		{
+			// 如果選擇的技能能力的狀態發生變化，更新按鈕狀態
 			SpellPointsChangedDelegate.Broadcast(Points);
+			CurrentSpellPoints = Points;
+
+			// 如果技能點數發生變化，更新按鈕啟用狀態
+			bool bEnabledSpendPoints = false;
+			bool bEnabledEquip = false;
+			ShouldEnableButtons(SelectedAbility.Status, CurrentSpellPoints, bEnabledSpendPoints, bEnabledEquip);
+			SpellGlobeSelectedDelegate.Broadcast(bEnabledSpendPoints, bEnabledEquip);
 		}
 	);
 }
@@ -59,6 +77,8 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 		AbilityStatus = GetAuraASC()->GetStatusFromSpec(*AbilitySpec);
 	}
 
+	SelectedAbility.Ability = AbilityTag;
+	SelectedAbility.Status = AbilityStatus;
 	// 判斷按鈕是否啟用
 	bool bEnabledSpendPoints = false;
 	bool bEnabledEquip = false;
