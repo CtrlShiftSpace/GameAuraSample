@@ -53,6 +53,9 @@ public:
 	// 由 client 呼叫，並在 server 端執行花費技能點數動作
 	UFUNCTION(Server, Reliable)
 	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
+
+	// 由 AbilityTag 取得該能力的描述文字，包含下一等級的描述
+	bool GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription);
 protected:
 
 	virtual void OnRep_ActivateAbilities() override;

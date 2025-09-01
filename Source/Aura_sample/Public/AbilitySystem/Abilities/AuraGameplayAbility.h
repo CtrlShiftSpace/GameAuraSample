@@ -19,4 +19,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	FGameplayTag StartupInputTag;
 
+	// 取得技能在不同等級的描述說明
+	virtual FString GetDescription(int32 Level); 
+	virtual FString GetNextLevelDescription(int32 Level);
+	static FString GetLockedDescription(int32 Level);
+	
 };
