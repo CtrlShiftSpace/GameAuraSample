@@ -46,6 +46,10 @@ public:
 	// 按下花費技能點數按鈕
 	UFUNCTION(BlueprintCallable)
 	void SpendPointButtonPressed();
+
+	// 取消技能按鈕選取
+	UFUNCTION(BlueprintCallable)
+	void GlobeDeselect();
 private:
 	
 	static void ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints, bool& bShouldEnableSpellPointsButton, bool& bShouldEnableEquipButton);
