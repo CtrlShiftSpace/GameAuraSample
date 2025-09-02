@@ -12,6 +12,7 @@ struct FGameplayTag;
 
 // 技能按鈕傳遞啟用狀態的 Delegate
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FSpellGlobeSelectedSignature, bool, bSpendPointsButtonEnabled, bool, bEquipButtonEnabled, FString, Description, FString, NextLevelDescription);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitForEquipSelectionSignature, const FGameplayTag&, AbilityTag);
 
 struct FSelectedAbility
 {
@@ -35,6 +36,14 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FSpellGlobeSelectedSignature SpellGlobeSelectedDelegate;
+
+	// 等待裝備技能選擇
+	UPROPERTY(BlueprintAssignable)
+	FWaitForEquipSelectionSignature WaitForEquipDelegate;
+
+	// 停止等待裝備技能選擇
+	UPROPERTY(BlueprintAssignable)
+	FWaitForEquipSelectionSignature StopWaitForEquipDelegate;
 	
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
@@ -50,9 +59,15 @@ public:
 	// 取消技能按鈕選取
 	UFUNCTION(BlueprintCallable)
 	void GlobeDeselect();
+
+	// 按下裝備按鈕
+	UFUNCTION(BlueprintCallable)
+	void EquipButtonPressed();
 private:
 	
 	static void ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints, bool& bShouldEnableSpellPointsButton, bool& bShouldEnableEquipButton);
 	FSelectedAbility SelectedAbility = { FAuraGameplayTags::Get().Abilities_None, FAuraGameplayTags::Get().Abilities_Status_Locked };
 	int32 CurrentSpellPoints = 0;
+	// 是否正在等待玩家選擇裝備技能
+	bool bWaitingForEquipSelection = false;
 };
