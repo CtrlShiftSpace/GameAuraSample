@@ -63,6 +63,13 @@ public:
 	// 按下裝備按鈕
 	UFUNCTION(BlueprintCallable)
 	void EquipButtonPressed();
+
+	// 按下裝備欄位按鈕
+	UFUNCTION(BlueprintCallable)
+	void SpellRowGlobePressed(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType);
+
+	// 當技能被裝備時呼叫
+	void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot);
 private:
 	
 	static void ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints, bool& bShouldEnableSpellPointsButton, bool& bShouldEnableEquipButton);
@@ -70,4 +77,6 @@ private:
 	int32 CurrentSpellPoints = 0;
 	// 是否正在等待玩家選擇裝備技能
 	bool bWaitingForEquipSelection = false;
+	// 選擇的裝備 Slot 欄位
+	FGameplayTag SelectedSlot;
 };
