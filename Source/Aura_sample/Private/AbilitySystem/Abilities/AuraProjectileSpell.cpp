@@ -41,7 +41,12 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 	);
+	
+	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
+	
+	/* 以下作為教學目的使用，因後續有 ApplyDamageEffect 替代，將此部分註解掉
+	
 	// Give the Projectile a Gameplay Effect Spec for Causing Damage.
 	// 從角色取得ASC
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
@@ -69,6 +74,8 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		
 	// 生成的傷害效果規範(SpecHandle) 儲存到投射物(Projectile) 的 DamageEffectSpecHandle 屬性
 	Projectile->DamageEffectSpecHandle = SpecHandle;
+
+	*/
 
 	Projectile->FinishSpawning(SpawnTransform);
 }
