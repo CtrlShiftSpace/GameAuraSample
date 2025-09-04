@@ -27,12 +27,11 @@ protected:
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+	FGameplayTag DamageType;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	FScalableFloat Damage;
+	
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
-
-	// 根據傷害類型取得對應的傷害值
-	float GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType) const;
-	
 };

@@ -62,15 +62,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		
 	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 
-
-	for (auto& Pair : DamageTypes)
-	{
-		// 取得 FScalableFloat 設定傷害的數值
-		const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-		// 使用 AssignTagSetByCallerMagnitude 函數，將GameplayTag 作為Key值，後方的數字為Value，設定到SpecHandle中
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
-	}
-
+	// 取得 FScalableFloat 設定傷害的數值
+	const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	// 使用 AssignTagSetByCallerMagnitude 函數，將GameplayTag 作為Key值，後方的數字為Value，設定到SpecHandle中
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageType, ScaledDamage);
 		
 	// 生成的傷害效果規範(SpecHandle) 儲存到投射物(Projectile) 的 DamageEffectSpecHandle 屬性
 	Projectile->DamageEffectSpecHandle = SpecHandle;

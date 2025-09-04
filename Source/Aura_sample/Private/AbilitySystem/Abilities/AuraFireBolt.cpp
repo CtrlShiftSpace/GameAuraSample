@@ -2,11 +2,11 @@
 
 
 #include "AbilitySystem/Abilities/AuraFireBolt.h"
-#include "AuraGameplayTags.h"
 
 FString UAuraFireBolt::GetDescription(int32 Level)
 {
-	const int32 FireDamage = GetDamageByDamageType(Level, FAuraGameplayTags::Get().Damage_Fire);
+	// 取得 FScalableFloat 設定傷害的數值
+	const int32 FireDamage = Damage.GetValueAtLevel(Level);
 	// 取得此等級能力的魔力值消耗
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	// 取得此等級能力的冷卻時間
@@ -46,7 +46,8 @@ FString UAuraFireBolt::GetDescription(int32 Level)
 
 FString UAuraFireBolt::GetNextLevelDescription(int32 Level)
 {
-	const int32 FireDamage = GetDamageByDamageType(Level, FAuraGameplayTags::Get().Damage_Fire);
+	// 取得 FScalableFloat 設定傷害的數值
+	const int32 FireDamage = Damage.GetValueAtLevel(Level);
 	// 取得此等級能力的魔力值消耗
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	// 取得此等級能力的冷卻時間
