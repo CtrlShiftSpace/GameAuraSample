@@ -62,6 +62,11 @@ public:
 	FGameplayTag Debuff_Arcade;
 	FGameplayTag Debuff_Physical;
 
+	FGameplayTag Debuff_Chance;
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Duration;
+	FGameplayTag Debuff_Frequency;
+
 	FGameplayTag Abilities_None;
 	
 	FGameplayTag Abilities_Attack;
