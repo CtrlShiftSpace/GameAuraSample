@@ -5,7 +5,9 @@
 #include "GameplayEffectTypes.h"
 #include "AuraAbilityTypes.generated.h"
 
-USTRUCT()
+class UGameplayEffect;
+
+USTRUCT(BlueprintType)
 struct FDamageEffectParams
 {
 	GENERATED_BODY()
