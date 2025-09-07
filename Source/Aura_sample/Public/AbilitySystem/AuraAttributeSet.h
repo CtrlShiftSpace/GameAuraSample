@@ -253,6 +253,12 @@ public:
 	void OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const;
 	
 private:
+	// 處理收到傷害的邏輯
+	void HandleIncomingDamage(const FEffectProperties& Props);
+	// 處理收到經驗值的邏輯
+	void HandleIncomingXP(const FEffectProperties& Props);
+	// Debuff 效果
+	void Debuff(const FEffectProperties& Props);
 	void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool CriticalHit) const;
 	void SendXPEvent(const FEffectProperties& Props);
