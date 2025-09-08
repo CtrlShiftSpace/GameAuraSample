@@ -9,6 +9,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AuraCharacterBase.generated.h"
 
+class UDebuffNiagaraComponent;
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayEffect;
@@ -41,6 +42,7 @@ public:
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual void DecrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
+	virtual UDebuffNiagaraComponent* GetDebuffNiagaraComponent_Implementation() override;
 	/* End Combat Interface */
 
 	// 處理角色死亡時，由Server將死亡事件分發到所有Client端
@@ -102,6 +104,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
 	TObjectPtr<UMotionWarpingComponent> MotionWarping;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
+	TObjectPtr<UDebuffNiagaraComponent> DebuffNiagaraComponent;
+	
 	/* Dissolve Effects */
 
 	void Dissolve();

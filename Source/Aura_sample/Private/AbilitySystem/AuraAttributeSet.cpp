@@ -10,6 +10,7 @@
 #include "Interaction/CombatInterface.h"
 #include "Player/AuraPlayerController.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h"
 #include "Interaction/PlayerInterface.h"
 
@@ -405,7 +406,41 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props)
 		TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
 		AuraContext->SetDamageType(DebuffDamageType);
 		// 將效果應用到本身
-		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+		FActiveGameplayEffectHandle ActiveEffectHandle = Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+		FOnActiveGameplayEffectRemoved_Info* EffectRemovedInfo = Props.TargetASC->OnGameplayEffectRemoved_InfoDelegate(ActiveEffectHandle);
+		if (EffectRemovedInfo != nullptr)
+		{
+			EffectRemovedInfo->AddLambda(
+				[this, Props](const FGameplayEffectRemovalInfo& RemovalInfo)
+				{
+					if (const FGameplayEffectContext* RemovalEffectContext = RemovalInfo.EffectContext.Get())
+					{
+						if (const FAuraGameplayEffectContext* AuraRemovalEffectContext = static_cast<const FAuraGameplayEffectContext*>(RemovalEffectContext))
+						{
+							if (AuraRemovalEffectContext->GetDamageType()->MatchesTagExact(FAuraGameplayTags::Get().Damage_Fire))
+							{
+								if (Props.TargetCharacter->Implements<UCombatInterface>())
+								{
+									if (UDebuffNiagaraComponent* DebuffNiagaraComponent = ICombatInterface::Execute_GetDebuffNiagaraComponent(Props.TargetCharacter))
+									{
+										DebuffNiagaraComponent->Deactivate();
+									}
+								}
+							}
+						}
+					}
+				}
+			);
+		}
+
+		
+		if (Props.TargetCharacter->Implements<UCombatInterface>())
+		{
+			if (UDebuffNiagaraComponent* DebuffNiagaraComponent = ICombatInterface::Execute_GetDebuffNiagaraComponent(Props.TargetCharacter))
+			{
+				DebuffNiagaraComponent->Activate();
+			}
+		}
 	}
 }
 

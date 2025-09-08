@@ -11,6 +11,7 @@
 #include "MotionWarpingComponent.h"
 #include "Aura_sample/Aura_sample.h"
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -43,6 +44,9 @@ AAuraCharacterBase::AAuraCharacterBase()
 
 	// 建立 Motion Warping
 	MotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>("MotionWarping");
+
+	DebuffNiagaraComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("DebuffNiagaraComponent");
+	DebuffNiagaraComponent->SetupAttachment(GetMesh(), FName("DebuffNiagaraSocket"));
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
@@ -108,6 +112,11 @@ void AAuraCharacterBase::DecrementMinionCount_Implementation(int32 Amount)
 ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation()
 {
 	return CharacterClass;
+}
+
+UDebuffNiagaraComponent* AAuraCharacterBase::GetDebuffNiagaraComponent_Implementation()
+{
+	return DebuffNiagaraComponent;
 }
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()

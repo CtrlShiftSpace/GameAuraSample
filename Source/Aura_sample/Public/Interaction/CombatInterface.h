@@ -86,4 +86,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	UDebuffNiagaraComponent* GetDebuffNiagaraComponent();
 };
