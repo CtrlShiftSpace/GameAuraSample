@@ -10,6 +10,7 @@
 #include "Interaction/CombatInterface.h"
 #include "Player/AuraPlayerController.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h"
 #include "Interaction/PlayerInterface.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -116,6 +117,12 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
+
+	// 如果目標角色已經死亡，則不進行後續處理
+	if (Props.TargetCharacter->Implements<UCombatInterface>() && ICombatInterface::Execute_IsDead(Props.TargetCharacter))
+	{
+		return;
+	}
 
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
@@ -337,7 +344,69 @@ void UAuraAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
 
 void UAuraAttributeSet::Debuff(const FEffectProperties& Props)
 {
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+	FGameplayEffectContextHandle EffectContextHandle = Props.SourceASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(Props.SourceAvatarActor);
+
+	// 取得傷害類型 Tag
+	const FGameplayTag DamageType = UAuraAbilitySystemLibrary::GetDamageType(Props.EffectContextHandle);
+	const float DebuffDamage = UAuraAbilitySystemLibrary::GetDebuffDamage(Props.EffectContextHandle);
+	const float DebuffDuration = UAuraAbilitySystemLibrary::GetDebuffDuration(Props.EffectContextHandle);
+	const float DebuffFrequency = UAuraAbilitySystemLibrary::GetDebuffFrequency(Props.EffectContextHandle);
 	
+	// 根據傷害類型決定 Debuff 名稱
+	FString DebuffName = FString::Printf(TEXT("DynamicDebuff%s"), *DamageType.ToString());
+	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
+
+	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
+	Effect->Period = DebuffFrequency;
+	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
+
+	// FInheritedTagContainer 可用於儲存、新增和移除標籤，並有處理繼承標籤的能力
+	FInheritedTagContainer TagContainer = FInheritedTagContainer();
+	// 建立一個用來管理目標標籤的 UTargetTagsGameplayEffectComponent 元件
+	UTargetTagsGameplayEffectComponent& Component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
+	// 將傷害類型對應的 Debuff Tag 加入 TagContainer
+	TagContainer.Added.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	// 不建議使用此行，應透過修改 Added 或 Removed 來間接影響 CombinedTags
+	// TagContainer.CombinedTags.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	// 將 TagContainer 中的標籤變更應用到 GameplayEffect 上
+	Component.SetAndApplyTargetTagChanges(TagContainer);
+
+	// StackingType 為同一個效果被多次應用時的行為
+	// AggregateBySource 是檢查目標上是否已經存在一個來自相同來源類型的效果
+	// 新的效果會刷新或更新舊的效果
+	// 例如，一個由玩家施放的"中毒"效果，如果玩家再次施放，舊的中毒效果會被新效果取代
+	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
+	// 這個效果在目標上可以堆疊的最大數量
+	Effect->StackLimitCount = 1;
+
+	// Effect->Modifiers 為一個 TArray 儲存 FGameplayModifierInfo
+	const int32 Index = Effect->Modifiers.Num();
+	// 在 Modifiers 陣列中新增一個 FGameplayModifierInfo
+	// 並且取得其 reference
+	Effect->Modifiers.Add(FGameplayModifierInfo());
+	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[Index];
+
+	// 對目標的 IncomingDamage 處理 Additive
+	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
+	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
+	ModifierInfo.Attribute = UAuraAttributeSet::GetInComingDamageAttribute();
+
+	// 建立 GameplayEffectSpec 
+	if (FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContextHandle, 1.f))
+	{
+		// MutableSpec->GetContext() 會回傳一個 FGameplayEffectContextHandle
+		// 透過 Get() 取出實際的原始指標 FGameplayEffectContext*
+		// 轉型為 FAuraGameplayEffectContext
+		FAuraGameplayEffectContext* AuraContext = static_cast<FAuraGameplayEffectContext*>(MutableSpec->GetContext().Get());
+		// 創建一個 Gameplay Tag 物件，並使用一個 共享指標 (Shared Pointer) 來管理它的生命週期
+		// MakeShareable 將一個原始指標 (raw pointer) 轉換為一個 TSharedPtr
+		TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
+		AuraContext->SetDamageType(DebuffDamageType);
+		// 將效果應用到本身
+		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+	}
 }
 
 void UAuraAttributeSet::SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const
