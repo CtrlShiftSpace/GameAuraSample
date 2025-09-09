@@ -3,10 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemComponent.h"
 #include "UObject/Interface.h"
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "CombatInterface.generated.h"
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent* /*ASC*/);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*, DeadActor);
 
 class UMotionWarpingComponent;
 class UNiagaraSystem;
@@ -86,4 +90,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass();
+
+	// 取得 FOnASCRegistered Delegate
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() = 0;
+	// 取得 FOnDeath Delegate
+	virtual FOnDeath GetOnDeathDelegate() = 0;
 };

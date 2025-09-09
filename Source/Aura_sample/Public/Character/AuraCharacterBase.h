@@ -9,6 +9,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AuraCharacterBase.generated.h"
 
+class UDebuffNiagaraComponent;
 class UAbilitySystemComponent;
 class UAttributeSet;
 class UGameplayEffect;
@@ -41,7 +42,14 @@ public:
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual void DecrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
+	virtual FOnDeath GetOnDeathDelegate() override;
 	/* End Combat Interface */
+
+	// 宣告一個 FOnASCRegistered Delegate
+	FOnASCRegistered OnASCRegistered;
+	// 宣告一個 FOnDeath Delegate
+	FOnDeath OnDeath;
 
 	// 處理角色死亡時，由Server將死亡事件分發到所有Client端
 	// NetMulticast : 會將此函式的執行請求傳送給所有客戶端，並經由客戶端的本地執行
@@ -133,6 +141,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 
+	// 燃燒傷害的 Debuff 特效
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffComponent;
+	
 private:
 
 	// 具備的能力
