@@ -88,6 +88,9 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
+			// 計算衝擊的方向與力道
+			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulse;
+			DamageEffectParams.DeathImpulse = DeathImpulse;
 			// 因為原來沒有設定TargetAbilitySystemComponent，所以需要在觸碰到角色時設定目標的 AbilitySystemComponent
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			// 套用效果
