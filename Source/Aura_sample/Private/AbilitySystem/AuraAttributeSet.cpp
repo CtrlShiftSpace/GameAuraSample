@@ -291,6 +291,13 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+
+			const FVector& KnockbackForce = UAuraAbilitySystemLibrary::GetKnockbackForce(Props.EffectContextHandle);
+			// 在此誤差範圍內都視為 Vector::Zero
+			if (!KnockbackForce.IsNearlyZero(1.f))
+			{
+				Props.TargetCharacter->LaunchCharacter(KnockbackForce, true, true);
+			}
 		}
 
 		const bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);

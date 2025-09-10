@@ -91,6 +91,22 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			// 計算衝擊的方向與力道
 			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
 			DamageEffectParams.DeathImpulse = DeathImpulse;
+			// 擊退的機率
+			const bool bKnockback = FMath::RandRange(1, 100) < DamageEffectParams.KnockbackChance;
+			if (bKnockback)
+			{
+				// 設定擊退的旋轉(做法1)
+				// const FVector KnockbackDirection = GetActorForwardVector().RotateAngleAxis(45.f, GetActorRightVector());
+
+				// 設定擊退的旋轉(做法2)
+				FRotator Rotation = GetActorRotation();
+				Rotation.Pitch = 45.f;
+				const FVector KnockbackDirection = Rotation.Vector();
+				
+				// 設定擊退的向量
+				const FVector KnockbackForce = KnockbackDirection * DamageEffectParams.KnockbackForceMagnitude;
+				DamageEffectParams.KnockbackForce = KnockbackForce;
+			}
 			// 因為原來沒有設定TargetAbilitySystemComponent，所以需要在觸碰到角色時設定目標的 AbilitySystemComponent
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			// 套用效果

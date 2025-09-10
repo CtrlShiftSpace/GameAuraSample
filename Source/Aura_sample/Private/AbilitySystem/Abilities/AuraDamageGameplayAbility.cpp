@@ -29,6 +29,19 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.DebuffDuration = DebuffDuration;
 	Params.DebuffFrequency = DebuffFrequency;
 	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
+	Params.KnockbackForceMagnitude = KnockbackForceMagnitude;
+	Params.KnockbackChance = KnockbackChance;
+	if (IsValid(TargetActor))
+	{
+		// 取得此際能擁有者與目標的角度
+		FRotator Rotation = (TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
+		Rotation.Pitch = 45.f;
+		// 取得此際能擁有者與目標的向量
+		const FVector ToTarget = Rotation.Vector();
+		// 設定死亡衝擊與擊退的力量
+		Params.DeathImpulse = ToTarget * DeathImpulseMagnitude;
+		Params.KnockbackForce = ToTarget * KnockbackForceMagnitude;
+	}
 	return Params;
 }
 
