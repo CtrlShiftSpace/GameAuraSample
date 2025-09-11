@@ -2,8 +2,9 @@
 
 
 #include "AbilitySystem/Abilities/AuraFireBolt.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
-#include "Kismet/KismetSystemLibrary.h"
+#include "Actor/AuraProjectile.h"
 
 FString UAuraFireBolt::GetDescription(int32 Level)
 {
@@ -99,26 +100,27 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 
 	// 發射方向
 	const FVector Forward = Rotation.Vector();
-	// 左邊最大扇形方向
-	const FVector LeftOfSpread = Forward.RotateAngleAxis(-ProjectileSpread / 2, FVector::UpVector);
+	// 平均分配方向
+	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, NumProjectiles);
 
-	const FVector Start = SocketLocation + FVector(0, 0, 10);
-	// 生成投擲物數量
-	// NumProjectiles = FMath::Min(MaxNumProjectiles, GetAbilityLevel());
-	if (NumProjectiles > 1)
+	for (const FRotator& Rot : Rotations)
 	{
-		// 為了確保發射物最後一次執行要在最右端的位置，因此實際上角度需要除以 (投擲物數量-1)
-		const float DeltaSpread = ProjectileSpread / (NumProjectiles - 1);
-		for (int32 i = 0; i < NumProjectiles; i++)
-		{
-			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, FVector::UpVector);
-			UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), Start, Start + Direction * 75.f, 5.f, FLinearColor::Green, 120.f, 3.f);
-		}
-	}
-	else
-	{
-		// 單一投擲物
-		UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), Start, Start + Forward * 75.f, 5.f, FLinearColor::Green, 120.f, 3.f);
-	}
+		// 生成位置
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(SocketLocation);
+		// Set the Projectile Rotation
+		SpawnTransform.SetRotation(Rot.Quaternion());
 
+		// 生成投擲物件
+		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
+			ProjectileClass,
+			SpawnTransform,
+			GetOwningActorFromActorInfo(),
+			Cast<APawn>(GetOwningActorFromActorInfo()),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+		);
+		
+		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+		Projectile->FinishSpawning(SpawnTransform);
+	}
 }
