@@ -14,6 +14,7 @@
 #include "AuraGameplayTags.h"
 #include "NavigationSystem.h"
 #include "NavigationPath.h"
+#include "NiagaraFunctionLibrary.h"
 #include "GameFramework/Character.h"
 #include "UI/Widget/DamageTextComponent.h"
 
@@ -176,6 +177,8 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 					// 設定當前為自動移動
 					bAutoRunning = true;
 				}
+				// 產生特效
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
 			}
 		}
 		FollowTime = 0.f;

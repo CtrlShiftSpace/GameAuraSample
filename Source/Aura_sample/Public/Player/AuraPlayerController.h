@@ -7,6 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "AuraPlayerController.generated.h"
 
+class UNiagaraSystem;
 // 要加這行需在專案名.Build.cs 檔案中的PublicDependencyModuleNames.AddRange 加上 "EnhancedInput"
 class UInputMappingContext;
 
@@ -86,6 +87,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> ClickNiagaraSystem;
 
 	void AutoRun();
 
