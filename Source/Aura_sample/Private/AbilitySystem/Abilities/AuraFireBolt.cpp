@@ -5,6 +5,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
 #include "Actor/AuraProjectile.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 FString UAuraFireBolt::GetDescription(int32 Level)
 {
@@ -100,8 +101,10 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 
 	// 發射方向
 	const FVector Forward = Rotation.Vector();
+	// 限制發射數量
+	const int32 EffectiveNumProjectiles = FMath::Min(NumProjectiles, GetAbilityLevel());
 	// 平均分配方向
-	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, NumProjectiles);
+	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, EffectiveNumProjectiles);
 
 	for (const FRotator& Rot : Rotations)
 	{
@@ -121,6 +124,21 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 		);
 		
 		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+		if (HomingTarget && HomingTarget->Implements<UCombatInterface>())
+		{
+			// 注意這邊的 HomingTargetComponent 為 WeakPtr ，避免敵人死亡時仍被keep住
+			Projectile->ProjectileMovement->HomingTargetComponent = HomingTarget->GetRootComponent();
+		}
+		else
+		{
+			// 如果是點擊場景中物件，則在投擲物本身建立一個 SceneComponent 作為 HomingTargetComponent，當移除時會跟著 GC 處理掉
+			Projectile->HomingTargetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
+			Projectile->HomingTargetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
+			Projectile->ProjectileMovement->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
+		}
+		Projectile->ProjectileMovement->HomingAccelerationMagnitude = FMath::FRandRange(HomingAccelerationMin, HomingAccelerationMax);
+		Projectile->ProjectileMovement->bIsHomingProjectile = bLaunchHomingProjectiles;
+		
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 }

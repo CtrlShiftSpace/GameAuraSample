@@ -46,6 +46,7 @@ void AAuraProjectile::BeginPlay()
 	
 	// 因為這個物件不屬於Actor ，而是 world 環境中產生的，因此需要用指標記錄起來
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+	SetReplicateMovement(true);
 }
 
 void AAuraProjectile::OnHit()

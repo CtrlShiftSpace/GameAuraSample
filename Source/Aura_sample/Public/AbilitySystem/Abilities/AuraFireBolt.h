@@ -31,4 +31,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "FireBolt")
 	int32 MaxNumProjectiles = 5;
 
+	// 最小加速度
+	UPROPERTY(EditDefaultsOnly, Category = "FireBolt")
+	float HomingAccelerationMin = 1600.f;
+
+	// 最大加速度
+	UPROPERTY(EditDefaultsOnly, Category = "FireBolt")
+	float HomingAccelerationMax = 3200.f;
+
+	// 是否發射追蹤投擲物
+	UPROPERTY()
+	bool bLaunchHomingProjectiles = true;
 };
