@@ -18,9 +18,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StoreMouseDataInfo(const FHitResult& HitResult);
 
-	// 儲存擁有此能力的 PlayerController
+	// 儲存擁有此能力的相關變數
 	UFUNCTION(BlueprintCallable)
-	void StoreOwnerPlayerController();
+	void StoreOwnerVariable();
 	
 protected:
 
@@ -35,4 +35,8 @@ protected:
 	// 擁有此能力的 PlayerController
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	TObjectPtr<APlayerController> OwnerPlayerController;
+
+	// 擁有此能力的 Character
+	UPROPERTY(BlueprintReadWrite, Category = "Beam")
+	TObjectPtr<ACharacter> OwnerCharacter;
 };
