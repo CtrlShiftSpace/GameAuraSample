@@ -5,6 +5,7 @@
 #include "Engine/HitResult.h"
 #include "Player/AuraPlayerController.h"
 #include "AbilitySystemComponent.h"
+#include "Aura_sample/Aura_sample.h"
 
 UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility)
 {
@@ -40,7 +41,7 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	// 取得滑鼠的座標位置
 	APlayerController* PC = Ability->GetCurrentActorInfo()->PlayerController.Get();
 	FHitResult CursorHit;
-	PC->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	PC->GetHitResultUnderCursor(ECC_Target, false, CursorHit);
 	
 	// 定義此Data用來傳遞給Server
 	FGameplayAbilityTargetDataHandle DataHandle;
