@@ -21,6 +21,10 @@ public:
 	// 儲存擁有此能力的相關變數
 	UFUNCTION(BlueprintCallable)
 	void StoreOwnerVariable();
+
+	// 對目標位置進行追蹤
+	UFUNCTION(BlueprintCallable)
+	void TraceFirstTarget(const FVector& BeamTargetLocation);
 	
 protected:
 
