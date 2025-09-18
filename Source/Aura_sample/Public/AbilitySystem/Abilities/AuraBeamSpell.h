@@ -25,7 +25,10 @@ public:
 	// 對目標位置進行追蹤
 	UFUNCTION(BlueprintCallable)
 	void TraceFirstTarget(const FVector& BeamTargetLocation);
-	
+
+	// 儲存額外目標
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets);
 protected:
 
 	// 滑鼠點擊位置
@@ -43,4 +46,8 @@ protected:
 	// 擁有此能力的 Character
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	TObjectPtr<ACharacter> OwnerCharacter;
+
+	// 光束攻擊最大追蹤數量
+	UPROPERTY(EditDefaultsOnly, Category = "Beam")
+	int32 MaxNumShockTargets = 5;
 };
