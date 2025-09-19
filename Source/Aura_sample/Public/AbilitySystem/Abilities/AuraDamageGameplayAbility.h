@@ -25,6 +25,10 @@ public:
 	// 讀取對象已有預設值來建立 FDamageEffectParams 結構
 	UFUNCTION(BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const; 
+
+	// 取得此能力等級的傷害值
+	UFUNCTION(BlueprintPure)
+	float GetDamageAtLevel() const;
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
