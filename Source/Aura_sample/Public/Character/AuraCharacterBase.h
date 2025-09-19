@@ -43,14 +43,14 @@ public:
 	virtual void DecrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
-	virtual FOnDeath GetOnDeathDelegate() override;
+	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
 	/* End Combat Interface */
 
 	// 宣告一個 FOnASCRegistered Delegate
 	FOnASCRegistered OnASCRegistered;
 	// 宣告一個 FOnDeath Delegate
-	FOnDeath OnDeath;
+	FOnDeathSignature OnDeathDelegate;
 
 	// 處理角色死亡時，由Server將死亡事件分發到所有Client端
 	// NetMulticast : 會將此函式的執行請求傳送給所有客戶端，並經由客戶端的本地執行

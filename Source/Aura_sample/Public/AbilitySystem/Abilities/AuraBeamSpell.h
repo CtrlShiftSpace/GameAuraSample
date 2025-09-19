@@ -29,6 +29,14 @@ public:
 	// 儲存額外目標
 	UFUNCTION(BlueprintCallable)
 	void StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets);
+
+	// 當主要目標死亡時呼叫
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrimaryTargetDied(AActor* DeadActor);
+
+	// 當額外目標死亡時呼叫
+	UFUNCTION(BlueprintImplementableEvent)
+	void AdditionalTargetDied(AActor* DeadActor);
 protected:
 
 	// 滑鼠點擊位置

@@ -10,7 +10,7 @@
 #include "CombatInterface.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent* /*ASC*/);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*, DeadActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathSignature, AActor*, DeadActor);
 
 class UMotionWarpingComponent;
 class UNiagaraSystem;
@@ -63,6 +63,8 @@ public:
 	UAnimMontage* GetHitReactMontage();
 
 	virtual void Die(const FVector& DeathImpulse) = 0;
+	// 取得 FOnDeath Delegate
+	virtual FOnDeathSignature& GetOnDeathDelegate() = 0;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool IsDead() const;
@@ -93,8 +95,6 @@ public:
 
 	// 取得 FOnASCRegistered Delegate
 	virtual FOnASCRegistered GetOnASCRegisteredDelegate() = 0;
-	// 取得 FOnDeath Delegate
-	virtual FOnDeath GetOnDeathDelegate() = 0;
 	
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetInShockLoop(bool bInLoop);
