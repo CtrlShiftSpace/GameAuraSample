@@ -52,6 +52,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> CharacterCamera;
 
+	virtual void OnRep_Stunned() override;
+
 private:
 	// 改從 AAuraCharacterBase 繼承的方法覆寫
 	virtual void InitAbilityActorInfo() override;

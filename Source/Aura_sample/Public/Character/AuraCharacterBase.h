@@ -25,6 +25,8 @@ class AURA_SAMPLE_API AAuraCharacterBase : public ACharacter, public IAbilitySys
 public:
 	// 設定預設值
 	AAuraCharacterBase();
+	// 用來處理哪些屬性要複製給 Client 端
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	// 覆寫介面的GetAbilitySystemComponent
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; };
@@ -60,7 +62,15 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
-	
+
+	// 角色是否被眩暈
+	UPROPERTY(ReplicatedUsing=OnRep_Stunned, BlueprintReadOnly)
+	bool bIsStunned = false;
+
+	// 當 bIsStunned 變化時呼叫
+	UFUNCTION()
+	virtual void OnRep_Stunned();
+
 protected:
 	// 當遊戲開始或物件產生時觸發
 	virtual void BeginPlay() override;
@@ -84,6 +94,12 @@ protected:
 
 	bool bDead = false;
 
+	// 當眩暈狀態改變時呼叫
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 600.f;
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 

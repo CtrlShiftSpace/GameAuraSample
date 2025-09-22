@@ -369,15 +369,26 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props)
 	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
 	Effect->Period = DebuffFrequency;
 	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
-
+	
 	// FInheritedTagContainer 可用於儲存、新增和移除標籤，並有處理繼承標籤的能力
 	FInheritedTagContainer TagContainer = FInheritedTagContainer();
 	// 建立一個用來管理目標標籤的 UTargetTagsGameplayEffectComponent 元件
 	UTargetTagsGameplayEffectComponent& Component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
 	// 將傷害類型對應的 Debuff Tag 加入 TagContainer
-	TagContainer.Added.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	const FGameplayTag DebuffTag = GameplayTags.DamageTypesToDebuffs[DamageType];
+	TagContainer.Added.AddTag(DebuffTag);
 	// 不建議使用此行，應透過修改 Added 或 Removed 來間接影響 CombinedTags
 	// TagContainer.CombinedTags.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+
+	// 如果是正在暈眩狀態中，阻止玩家輸入
+	if (DebuffTag.MatchesTagExact(GameplayTags.Debuff_Stun))
+	{
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_CursorTrace);
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputHeld);
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputPressed);
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputReleased);
+	}
+
 	// 將 TagContainer 中的標籤變更應用到 GameplayEffect 上
 	Component.SetAndApplyTargetTagChanges(TagContainer);
 
