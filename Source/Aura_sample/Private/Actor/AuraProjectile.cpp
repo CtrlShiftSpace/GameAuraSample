@@ -42,6 +42,8 @@ void AAuraProjectile::BeginPlay()
 	Super::BeginPlay();
 	// 當超過此時間(秒)時，此物體會自動Destroy
 	SetLifeSpan(LifeSpan);
+	// 讓此物件的移動會被複製到 server 與 client
+	SetReplicateMovement(true);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnSphereOverlap);
 	
 	// 因為這個物件不屬於Actor ，而是 world 環境中產生的，因此需要用指標記錄起來
@@ -79,6 +81,10 @@ void AAuraProjectile::Destroyed()
 
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (DamageEffectParams.SourceAbilitySystemComponent == nullptr)
+	{
+		return;
+	}
 	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
 	if (SourceAvatarActor == OtherActor)
 	{

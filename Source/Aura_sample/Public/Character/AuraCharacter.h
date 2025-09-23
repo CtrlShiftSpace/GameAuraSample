@@ -53,6 +53,7 @@ protected:
 	TObjectPtr<UCameraComponent> CharacterCamera;
 
 	virtual void OnRep_Stunned() override;
+	virtual void OnRep_Burned() override;
 
 private:
 	// 改從 AAuraCharacterBase 繼承的方法覆寫

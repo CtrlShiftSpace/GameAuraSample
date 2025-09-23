@@ -44,7 +44,7 @@ public:
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual void DecrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
-	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
 	/* End Combat Interface */
@@ -67,9 +67,17 @@ public:
 	UPROPERTY(ReplicatedUsing=OnRep_Stunned, BlueprintReadOnly)
 	bool bIsStunned = false;
 
+	// 角色是否被燃燒
+	UPROPERTY(ReplicatedUsing=OnRep_Burned, BlueprintReadOnly)
+	bool bIsBurned = false;
+
 	// 當 bIsStunned 變化時呼叫
 	UFUNCTION()
 	virtual void OnRep_Stunned();
+
+	// 當 bIsBurned 變化時呼叫
+	UFUNCTION()
+	virtual void OnRep_Burned();
 
 protected:
 	// 當遊戲開始或物件產生時觸發
@@ -161,6 +169,10 @@ protected:
 	// 燃燒傷害的 Debuff 特效
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffComponent;
+
+	// 暈眩效果的 Debuff 特效
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> StunDebuffComponent;
 	
 private:
 
