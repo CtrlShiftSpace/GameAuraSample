@@ -47,6 +47,8 @@ public:
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
+	virtual bool IsBeingShocked_Implementation() const override;
+	virtual void SetIsBeingShocked_Implementation(bool bInShock) override;
 	/* End Combat Interface */
 
 	// 宣告一個 FOnASCRegistered Delegate
@@ -71,6 +73,10 @@ public:
 	UPROPERTY(ReplicatedUsing=OnRep_Burned, BlueprintReadOnly)
 	bool bIsBurned = false;
 
+	// 角色是否處於被電擊狀態
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bIsBeingShocked = false;
+	
 	// 當 bIsStunned 變化時呼叫
 	UFUNCTION()
 	virtual void OnRep_Stunned();
