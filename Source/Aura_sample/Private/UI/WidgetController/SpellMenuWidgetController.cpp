@@ -143,7 +143,7 @@ void USpellMenuWidgetController::EquipButtonPressed()
 	if (SelectedStatus.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Equipped))
 	{
 		// 如果目前該技能是已裝備狀態，則先紀錄其 Input Tag
-		SelectedSlot = GetAuraASC()->GetInputTagFromAbilityTag(SelectedAbility.Ability);
+		SelectedSlot = GetAuraASC()->GetSlotFromAbilityTag(SelectedAbility.Ability);
 	}
 }
 

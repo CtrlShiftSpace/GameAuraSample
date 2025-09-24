@@ -48,7 +48,19 @@ public:
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	FGameplayTag GetStatusFromAbilityTag(const FGameplayTag& AbilityTag);
-	FGameplayTag GetInputTagFromAbilityTag(const FGameplayTag& AbilityTag);
+	FGameplayTag GetSlotFromAbilityTag(const FGameplayTag& AbilityTag);
+	// 檢查裝備技能欄位是否為空
+	bool SlotIsEmpty(const FGameplayTag& Slot);
+	// 檢查指定的 AbilitySpec 是否有綁定到指定的欄位
+	static bool AbilityHasSlot(const FGameplayAbilitySpec& Spec, const FGameplayTag& Slot);
+	// 檢查指定的 AbilitySpec 是否有綁定到任何欄位
+	static bool AbilityHasAnySlot(const FGameplayAbilitySpec& Spec);
+	// 由指定的 Slot 取得該欄位綁定的 AbilitySpec
+	FGameplayAbilitySpec* GetSpecWithSlot(const FGameplayTag& Slot);
+	// 檢查該能力是否為被動技能
+	bool IsPassiveAbility(const FGameplayAbilitySpec& Spec) const;
+	// 將指定的 AbilitySpec 綁定到指定的 Slot
+	static void AssignSlotToAbility(FGameplayAbilitySpec& Spec, const FGameplayTag& Slot);
 	
 	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
 	
@@ -75,7 +87,7 @@ public:
 	bool GetDescriptionByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription);
 
 	// 移除指定的裝備欄位的技能
-	void ClearSlot(FGameplayAbilitySpec* Spec);
+	static void ClearSlot(FGameplayAbilitySpec* Spec);
 
 	// 指定 Slot 的技能並移除
 	void ClearAbilitiesOfSlot(const FGameplayTag& Slot);
