@@ -319,8 +319,6 @@ void UAuraAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
 {
 	const float LocalIncomingXP = GetInComingXP();
 	SetInComingXP(0.f);
-
-	// TODO: 確認是否需要升級
 		
 	// SourceCharacter 是擁有此 AttributeSet 角色，透過 GA_ListenForEvents 接收到 GE_EventBasedEffect 所傳遞的 IncomingXP
 	// 如果有來源角色有實作 PlayerInterface 介面才執行 AddToXP
@@ -335,12 +333,20 @@ void UAuraAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
 		const int32 NumOfLevelups = NewLevel - CurrentLevel;
 		if (NumOfLevelups > 0)
 		{
+			IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumOfLevelups);
+
 			// 取得 AttributePointReward 和 SpellPointsReward
 			// 升級後除了等級提升，也要處理技能點的增加與回覆 HP 與 MP
-			const int32 AttributePortsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
-			const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
-
-			IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumOfLevelups);
+			int32 AttributePortsReward = 0;
+			int32 SpellPointsReward = 0;
+			
+			// 計算每升一級就取得該等級的獎勵
+			for (int32 i = 0; i < NumOfLevelups; ++i)
+			{
+ 				AttributePortsReward += IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel + i);
+				SpellPointsReward += IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel + i);
+			}
+			
 			IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePortsReward);
 			IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
 

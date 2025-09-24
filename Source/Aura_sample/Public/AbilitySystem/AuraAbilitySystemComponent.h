@@ -68,6 +68,7 @@ public:
 	void ServerEquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& Slot);
 
 	// 由 server 呼叫，並在 client 端執行裝備技能動作
+	UFUNCTION(Client, Reliable)
 	void ClientEquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot);
 	
 	// 由 AbilityTag 取得該能力的描述文字，包含下一等級的描述
