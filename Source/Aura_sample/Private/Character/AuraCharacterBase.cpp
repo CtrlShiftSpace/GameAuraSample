@@ -12,6 +12,7 @@
 #include "Aura_sample/Aura_sample.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
+#include "AbilitySystem/Passive/PassiveNiagaraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -20,8 +21,8 @@
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
 {
- 	// 如果開啟(true)的話，每一幀會調用Tick()，這邊關閉(false)可以節省效能
-	PrimaryActorTick.bCanEverTick = false;
+ 	// 如果開啟(true)的話，每一幀會調用Tick()，如果關閉(false)可以節省效能
+	PrimaryActorTick.bCanEverTick = true;
 
 	// 建立 DebuffNiagaraComponent
 	BurnDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("BurnDebuffComponent");
@@ -55,6 +56,22 @@ AAuraCharacterBase::AAuraCharacterBase()
 
 	// 建立 Motion Warping
 	MotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>("MotionWarping");
+
+	// 加入附加特效元件
+	EffectAttachComponent = CreateDefaultSubobject<USceneComponent>("EffectAttachComponent");
+	EffectAttachComponent->SetupAttachment(GetRootComponent());
+	HaloOfProtectionNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("HaloOfProtectionNiagaraComponent");
+	HaloOfProtectionNiagaraComponent->SetupAttachment(EffectAttachComponent);
+	LifeSiphonNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("LifeSiphonNiagaraComponent");
+	LifeSiphonNiagaraComponent->SetupAttachment(EffectAttachComponent);
+	ManaSiphonNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("ManaSiphonNiagaraComponent");
+	ManaSiphonNiagaraComponent->SetupAttachment(EffectAttachComponent);
+}
+
+void AAuraCharacterBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	EffectAttachComponent->SetWorldRotation(FRotator::ZeroRotator);
 }
 
 void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -9,6 +9,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AuraCharacterBase.generated.h"
 
+class UPassiveNiagaraComponent;
 class UDebuffNiagaraComponent;
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -25,6 +26,7 @@ class AURA_SAMPLE_API AAuraCharacterBase : public ACharacter, public IAbilitySys
 public:
 	// 設定預設值
 	AAuraCharacterBase();
+	virtual void Tick(float DeltaTime) override;
 	// 用來處理哪些屬性要複製給 Client 端
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	// 覆寫介面的GetAbilitySystemComponent
@@ -193,4 +195,16 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TObjectPtr<UAnimMontage> HitReactMontage;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> HaloOfProtectionNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> LifeSiphonNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonNiagaraComponent;
+
+	// 用來附加特效的元件
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> EffectAttachComponent;
 };
