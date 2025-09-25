@@ -40,7 +40,7 @@ public:
 
 	// 顯示或隱藏魔法陣
 	UFUNCTION(BlueprintCallable)
-	void ShowMagicCircle();
+	void ShowMagicCircle(UMaterialInterface* DecalMaterial = nullptr);
 	
 	UFUNCTION(BlueprintCallable)
 	void HideMagicCircle();
