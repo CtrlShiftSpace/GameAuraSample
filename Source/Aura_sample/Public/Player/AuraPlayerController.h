@@ -7,6 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "AuraPlayerController.generated.h"
 
+class AMagicCircle;
 class UNiagaraSystem;
 // 要加這行需在專案名.Build.cs 檔案中的PublicDependencyModuleNames.AddRange 加上 "EnhancedInput"
 class UInputMappingContext;
@@ -36,6 +37,13 @@ public:
 	// 此函式會由server端觸發，但只在特定client端上執行
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
+
+	// 顯示或隱藏魔法陣
+	UFUNCTION(BlueprintCallable)
+	void ShowMagicCircle();
+	
+	UFUNCTION(BlueprintCallable)
+	void HideMagicCircle();
 protected:
 	// 覆寫BeginPlay方法
 	virtual void BeginPlay() override;
@@ -96,4 +104,14 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
+	// 魔法陣類別
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AMagicCircle> MagicCircleClass;
+
+	// 魔法陣物件指標
+	UPROPERTY()
+	TObjectPtr<AMagicCircle> MagicCircle;
+
+	// 更新魔法陣位置
+	void UpdateMagicCircleLocation();
 };

@@ -19,7 +19,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	// 顯示魔法陣元件
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDecalComponent> MagicCircleDecal;
 
 };
