@@ -66,6 +66,22 @@ protected:
 	// 擊退機率
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float KnockbackChance = 0.f;
+
+	// 是否有依據範圍給予不同傷害
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	bool bIsRadialDamage = false;
+
+	// 範圍傷害內圈半徑
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float RadialDamageInnerRadius = 0.f;
+
+	// 範圍傷害外圈半徑
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float RadialDamageOuterRadius = 0.f;
+
+	// 範圍傷害中心點
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	FVector RadialDamageOrigin = FVector::ZeroVector;
 	
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;

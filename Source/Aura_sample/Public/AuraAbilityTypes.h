@@ -61,6 +61,23 @@ struct FDamageEffectParams
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector KnockbackForce = FVector::ZeroVector;
+
+	// 是否有依據範圍給予不同傷害
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsRadialDamage = false;
+
+	// 範圍傷害內圈半徑
+	UPROPERTY(BlueprintReadWrite)
+	float RadialDamageInnerRadius = 0.f;
+
+	// 範圍傷害外圈半徑
+	UPROPERTY(BlueprintReadWrite)
+	float RadialDamageOuterRadius = 0.f;
+
+	// 範圍傷害中心點
+	UPROPERTY(BlueprintReadWrite)
+	FVector RadialDamageOrigin = FVector::ZeroVector;
+	
 };
 
 USTRUCT(BlueprintType)
@@ -81,6 +98,11 @@ public:
 	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
 	FVector GetDeathImpulse() const { return DeathImpulse; }
 	FVector GetKnockbackForce() const { return KnockbackForce; }
+	bool IsRadialDamage() const { return bIsRadialDamage; }
+	float GetRadialDamageInnerRadius() const { return RadialDamageInnerRadius; }
+	float GetRadialDamageOuterRadius() const { return RadialDamageOuterRadius; }
+	FVector GetRadialDamageOrigin() const { return RadialDamageOrigin; }
+	
 	
 	/* Setter */
 
@@ -93,6 +115,10 @@ public:
 	void SetDamageType(TSharedPtr<FGameplayTag> InDamageType) { DamageType = InDamageType; }
 	void SetDeathImpulse(const FVector& InDeathImpulse) { DeathImpulse = InDeathImpulse; }
 	void SetKnockbackForce(const FVector& InForce) { KnockbackForce = InForce; }
+	void SetIsRadialDamage(bool bInIsRadialDamage) { bIsRadialDamage = bInIsRadialDamage; }
+	void SetRadialDamageInnerRadius(float InRadius) { RadialDamageInnerRadius = InRadius; }
+	void SetRadialDamageOuterRadius(float InRadius) { RadialDamageOuterRadius = InRadius; }
+	void SetRadialDamageOrigin(const FVector& InOrigin) { RadialDamageOrigin = InOrigin; }
 	
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const
@@ -146,6 +172,22 @@ protected:
 
 	UPROPERTY()
 	FVector KnockbackForce = FVector::ZeroVector;
+
+	// 是否有依據範圍給予不同傷害
+	UPROPERTY()
+	bool bIsRadialDamage = false;
+
+	// 範圍傷害內圈半徑
+	UPROPERTY()
+	float RadialDamageInnerRadius = 0.f;
+
+	// 範圍傷害外圈半徑
+	UPROPERTY()
+	float RadialDamageOuterRadius = 0.f;
+
+	// 範圍傷害中心點
+	UPROPERTY()
+	FVector RadialDamageOrigin = FVector::ZeroVector;
 };
 
 template<>
