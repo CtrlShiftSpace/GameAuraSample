@@ -9,6 +9,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraAbilityTypes.h"
+#include "Kismet/GameplayStatics.h"
 
 // 這是 raw struct 僅作內部處理，因此不需要加上 F ，也不需要加上USTRUCT() 或 GENERATED_BODY 
 struct AuraDamageStatics
@@ -146,6 +147,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	}
 	
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
@@ -157,7 +159,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	DetermineDebuff(ExecutionParams, Spec, EvaluationParameters, TagsToCaptureDefs);
 
 	// Get Damage Set by Caller Magnitude
-	float Damage = 0;
+	float Damage = 0.f;
 	for (const TTuple<FGameplayTag, FGameplayTag>& Pair : FAuraGameplayTags::Get().DamageTypesToResistances)
 	{
 		const FGameplayTag DamageTypeTag = Pair.Key;
@@ -173,6 +175,35 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
 		
 		DamageTypeValue *= (100.f - Resistance) / 100.f;
+
+		// 檢查此傷害是否會依照範圍衰減
+		if (UAuraAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		{
+			// 將造成傷害目標轉換為 CombatInterface 介面
+			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
+			{
+				CombatInterface->GetOnDamageSignature().AddLambda(
+					// 使用 & 是讓 Lambda 內能直接操作外部變數，確保修改會對應到外部作用區域
+					[&](float DamageAmount)
+					{
+						DamageTypeValue = DamageAmount;
+					}
+				);
+			}
+			// 使用 ApplyRadialDamageWithFalloff 來處理範圍傷害
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				TargetAvatar,
+				DamageTypeValue,
+				0.f,
+				UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+				1.f, // 線性遞減
+				UDamageType::StaticClass(), // 使用基本的傷害類型
+				TArray<AActor*>(), // 不會忽略任何 Actor
+				SourceAvatar,
+				nullptr);
+		}
 		Damage += DamageTypeValue;
 	}
 	
@@ -185,7 +216,6 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const bool bBlocked = FMath::RandRange(0, 100) < TargetBlockChance;
 
 	// 將 bBlocked 存入 AuraGameplayEffectContext
-	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 	UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
 
 	Damage = bBlocked ? Damage / 2.f : Damage;

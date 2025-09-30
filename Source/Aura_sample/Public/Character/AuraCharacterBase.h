@@ -29,6 +29,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	// 用來處理哪些屬性要複製給 Client 端
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	// 覆寫AActor的TakeDamage方法
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	// 覆寫介面的GetAbilitySystemComponent
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; };
@@ -51,12 +53,15 @@ public:
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
 	virtual bool IsBeingShocked_Implementation() const override;
 	virtual void SetIsBeingShocked_Implementation(bool bInShock) override;
+	virtual FOnDamageSignature& GetOnDamageSignature() override;
 	/* End Combat Interface */
 
 	// 宣告一個 FOnASCRegistered Delegate
 	FOnASCRegistered OnASCRegistered;
 	// 宣告一個 FOnDeath Delegate
 	FOnDeathSignature OnDeathDelegate;
+	// 宣告一個 FOnDamage Delegate
+	FOnDamageSignature OnDamageDelegate;
 
 	// 處理角色死亡時，由Server將死亡事件分發到所有Client端
 	// NetMulticast : 會將此函式的執行請求傳送給所有客戶端，並經由客戶端的本地執行

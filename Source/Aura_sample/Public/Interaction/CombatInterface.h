@@ -11,6 +11,8 @@
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent* /*ASC*/);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeathSignature, AActor*, DeadActor);
+// 用來傳遞傷害值
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDamageSignature, float /*DamageAmount*/);
 
 class UMotionWarpingComponent;
 class UNiagaraSystem;
@@ -65,6 +67,8 @@ public:
 	virtual void Die(const FVector& DeathImpulse) = 0;
 	// 取得 FOnDeath Delegate
 	virtual FOnDeathSignature& GetOnDeathDelegate() = 0;
+	// 取得 FOnDamageSignature Delegate
+	virtual FOnDamageSignature& GetOnDamageSignature() = 0;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool IsDead() const;
