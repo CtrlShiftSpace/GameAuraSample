@@ -24,7 +24,7 @@ public:
 
 	// 讀取對象已有預設值來建立 FDamageEffectParams 結構
 	UFUNCTION(BlueprintPure)
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, FVector InRadialDamageOrigin = FVector::ZeroVector) const; 
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, FVector InRadialDamageOrigin = FVector::ZeroVector, bool bOverrideKnockbackDirection = false, FVector KnockbackDirectionOverride = FVector::ZeroVector, bool bOverrideDeathImpulse = false, FVector DeathImpulseDirectionOverride = FVector::ZeroVector, bool bOverridePitch = false, float PitchOverride = 0.f) const; 
 
 	// 取得此能力等級的傷害值
 	UFUNCTION(BlueprintPure)
