@@ -16,6 +16,7 @@
 #include "NavigationPath.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Actor/MagicCircle.h"
+#include "Aura_sample/Aura_sample.h"
 #include "Components/DecalComponent.h"
 #include "GameFramework/Character.h"
 #include "UI/Widget/DamageTextComponent.h"
@@ -150,8 +151,9 @@ void AAuraPlayerController::CursorTrace()
 		ThisActor = nullptr;
 		return;
 	}
-		
-	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	// 依據魔法陣啟用與否，使用不同的 Trace Channel
+	const ECollisionChannel TraceChannel = IsValid(MagicCircle) ? ECC_ExcludePlayers : ECC_Visibility;
+	GetHitResultUnderCursor(TraceChannel, false, CursorHit);
 	if (!CursorHit.bBlockingHit) {
 		return;
 	}
