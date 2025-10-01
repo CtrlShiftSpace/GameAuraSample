@@ -24,7 +24,7 @@ public:
 
 	// 讀取對象已有預設值來建立 FDamageEffectParams 結構
 	UFUNCTION(BlueprintPure)
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const; 
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, FVector InRadialDamageOrigin = FVector::ZeroVector) const; 
 
 	// 取得此能力等級的傷害值
 	UFUNCTION(BlueprintPure)
@@ -72,16 +72,12 @@ protected:
 	bool bIsRadialDamage = false;
 
 	// 範圍傷害內圈半徑
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float RadialDamageInnerRadius = 0.f;
 
 	// 範圍傷害外圈半徑
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float RadialDamageOuterRadius = 0.f;
-
-	// 範圍傷害中心點
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	FVector RadialDamageOrigin = FVector::ZeroVector;
 	
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
