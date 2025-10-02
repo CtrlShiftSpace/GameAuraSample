@@ -93,6 +93,7 @@ public:
 	FGameplayTag Abilities_Passive_ManaSiphon;
 	
 	FGameplayTag Cooldown_Fire_FireBolt;
+	FGameplayTag Cooldown_Fire_FireBlast;
 	FGameplayTag Cooldown_Lightning_Electrocute;
 	FGameplayTag Cooldown_Arcane_ArcaneShards;
 
