@@ -82,6 +82,9 @@ FString UAuraFireBlast::GetNextLevelDescription(int32 Level)
 
 TArray<AAuraFireBall*> UAuraFireBlast::SpawnFireBalls()
 {
+	// 檢查是否為 Server 呼叫
+	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
+	if (!bIsServer) TArray<AAuraFireBall*>();
 	// 用來存放生成的火球陣列
 	TArray<AAuraFireBall*> FireBalls;
 	// 取得角色面向的方向向量
@@ -108,7 +111,8 @@ TArray<AAuraFireBall*> UAuraFireBlast::SpawnFireBalls()
 
 		// 設定火球的傷害數值與效果參數
 		FireBall->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
-
+		// 設定火球返回的目標角色
+		FireBall->ReturnToActor = GetAvatarActorFromActorInfo();
 		// 加入到陣列中
 		FireBalls.Add(FireBall);
 

@@ -16,6 +16,12 @@ class AURA_SAMPLE_API AAuraFireBall : public AAuraProjectile
 
 public:
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartOutgoingTimeline();
+
+	// 返回的目標角色
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AActor> ReturnToActor;
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;

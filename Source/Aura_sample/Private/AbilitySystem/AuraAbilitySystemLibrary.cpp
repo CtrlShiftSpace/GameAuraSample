@@ -477,7 +477,8 @@ TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& 
 	if (NumRotators > 1)
 	{
 		// 為了確保最後一次執行角度要在最右端的位置，因此實際上角度需要除以 (數量-1)
-        const float DeltaSpread = Spread / (NumRotators - 1);
+		// 如果Spread大於等於360度，則每個旋轉器之間的角度為 360度 / (數量)
+        const float DeltaSpread = Spread < 360.0f ? Spread / (NumRotators - 1) : 360.0f / NumRotators;;
         for (int32 i = 0; i < NumRotators; i++)
         {
         	const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, Axis);
