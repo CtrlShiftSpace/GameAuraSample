@@ -3,6 +3,9 @@
 
 #include "AbilitySystem/Abilities/AuraFireBlast.h"
 
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Actor/AuraFireBall.h"
+
 FString UAuraFireBlast::GetDescription(int32 Level)
 {
 	// 取得 FScalableFloat 設定傷害的數值
@@ -79,5 +82,39 @@ FString UAuraFireBlast::GetNextLevelDescription(int32 Level)
 
 TArray<AAuraFireBall*> UAuraFireBlast::SpawnFireBalls()
 {
-	return TArray<AAuraFireBall*>();
+	// 用來存放生成的火球陣列
+	TArray<AAuraFireBall*> FireBalls;
+	// 取得角色面向的方向向量
+	const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+	// 取得角色所在位置
+	const FVector Location = GetAvatarActorFromActorInfo()->GetActorLocation();
+	// 取得均勻分佈的旋轉陣列
+	TArray<FRotator> Rotators = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, 360.f, NumFireBalls);
+
+	for (const FRotator& Rotator : Rotators)
+	{
+		FTransform SpawnTransform;
+		// 設定生成位置與旋轉
+		SpawnTransform.SetLocation(Location);
+		SpawnTransform.SetRotation(Rotator.Quaternion());
+		// 透過延遲生成火球方式，可以在正式完成生成之前修改屬性
+		AAuraFireBall* FireBall = GetWorld()->SpawnActorDeferred<AAuraFireBall>(
+			FireBallClass,
+			SpawnTransform,
+			GetOwningActorFromActorInfo(),
+			CurrentActorInfo->PlayerController->GetPawn(),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+			);
+
+		// 設定火球的傷害數值與效果參數
+		FireBall->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+
+		// 加入到陣列中
+		FireBalls.Add(FireBall);
+
+		// 正式完成生成
+		FireBall->FinishSpawning(SpawnTransform);
+	}
+
+	return FireBalls;
 }
