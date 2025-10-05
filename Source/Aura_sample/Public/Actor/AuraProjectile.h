@@ -48,13 +48,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> Sphere;
 
+	// 檢查是否為有效的重疊事件
+	bool IsValidOverlap(AActor* OtherActor);
+
+	bool bHit = false;
+
 private:
 
 	// 存活在畫面中的時間
 	UPROPERTY(EditDefaultsOnly)
 	float LifeSpan = 15.f;
-
-	bool bHit = false;
 
 	// 衝擊的粒子效果
 	UPROPERTY(EditAnywhere)
