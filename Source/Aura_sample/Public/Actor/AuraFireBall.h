@@ -29,5 +29,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
-	
+
+	// 當火球撞擊時呼叫
+	virtual void OnHit() override;
 };
