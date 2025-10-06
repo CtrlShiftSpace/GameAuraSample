@@ -113,6 +113,10 @@ TArray<AAuraFireBall*> UAuraFireBlast::SpawnFireBalls()
 		FireBall->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 		// 設定火球返回的目標角色
 		FireBall->ReturnToActor = GetAvatarActorFromActorInfo();
+		
+		FireBall->ExplosionDamageParams = MakeDamageEffectParamsFromClassDefaults();
+		FireBall->SetOwner(GetAvatarActorFromActorInfo());
+		
 		// 加入到陣列中
 		FireBalls.Add(FireBall);
 
