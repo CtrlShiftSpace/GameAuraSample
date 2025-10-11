@@ -25,4 +25,17 @@ public:
 
 	// 初始化讀取槽
 	void InitializeSlot();
+
+	// 設置玩家名稱
+	UPROPERTY()
+	FString PlayerName;
+
+	// 設置讀取槽名稱
+	UPROPERTY()
+	FString LoadSlotName;
+
+	// 設置讀取槽索引
+	UPROPERTY()
+	FString SlotIndex;
+	
 };
