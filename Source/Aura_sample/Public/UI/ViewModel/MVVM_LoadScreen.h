@@ -27,6 +27,18 @@ public:
 	// 根據索引獲取讀取槽位ViewModel
 	UFUNCTION(BlueprintPure)
 	UMVVM_LoadSlot* GetLoadSlotViewModelByIndex(int32 Index) const;
+
+	// 新建存檔按鈕被按下的事件
+	UFUNCTION(BlueprintCallable)
+	void NewSlotButtonPressed(int32 Slot, const FString EnteredName);
+
+	// 開始遊戲按鈕被按下的事件
+	UFUNCTION(BlueprintCallable)
+	void NewGameButtonPressed(int32 Slot);
+
+	// 選擇存檔按鈕被按下的事件
+	UFUNCTION(BlueprintCallable)
+	void SelectSlotButtonPressed(int32 Slot);
 	
 private:
 
