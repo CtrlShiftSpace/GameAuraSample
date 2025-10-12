@@ -26,10 +26,6 @@ public:
 	// 初始化讀取槽
 	void InitializeSlot();
 
-	// 設置讀取槽名稱
-	UPROPERTY()
-	FString LoadSlotName;
-
 	// 設置讀取槽索引
 	UPROPERTY()
 	FString SlotIndex;
@@ -40,9 +36,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter)
 	FText PlayerName;
 
-	// 設定 PlayerName 由於 FieldNotify 需要 Setter
+	/* 由於 FieldNotify 需要 Setter */
+	
+	// 設定 PlayerName 
 	void SetPlayerName(const FText& InPlayerName);
+	// 設定 LoadSlotName
+	void SetLoadSlotName(FString InLoadSlotName);
 
-	// 取得 PlayerName 由於 FieldNotify 需要 Getter
+	/* 由於 FieldNotify 需要 Getter */
+	
+	// 取得 PlayerName 
 	FText GetPlayerName() const;
+	// 取得 LoadSlotName
+	FString GetLoadSlotName() const;
+
+private:
+	
+	// 設置讀取槽名稱
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))
+	FString LoadSlotName;
 };

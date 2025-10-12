@@ -16,7 +16,17 @@ void UMVVM_LoadSlot::SetPlayerName(const FText& InPlayerName)
 	UE_MVVM_SET_PROPERTY_VALUE(PlayerName, InPlayerName);
 }
 
+void UMVVM_LoadSlot::SetLoadSlotName(FString InLoadSlotName)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(LoadSlotName, InLoadSlotName);
+}
+
 FText UMVVM_LoadSlot::GetPlayerName() const
 {
 	return PlayerName;
+}
+
+FString UMVVM_LoadSlot::GetLoadSlotName() const
+{
+	return LoadSlotName;
 }

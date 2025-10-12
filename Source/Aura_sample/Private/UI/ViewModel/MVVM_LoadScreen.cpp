@@ -11,13 +11,13 @@ void UMVVM_LoadScreen::InitializeLoadSlots()
 {
 	// 創建並初始化三個讀取槽位ViewModel元件，並將它們添加到LoadSlots TMap中
 	LoadSlot_0 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
-	LoadSlot_0->LoadSlotName = FString("LoadSlot_0");
+	LoadSlot_0->SetLoadSlotName(FString("LoadSlot_0"));
 	LoadSlots.Add(0, LoadSlot_0);
 	LoadSlot_1 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
-	LoadSlot_1->LoadSlotName = FString("LoadSlot_1");
+	LoadSlot_1->SetLoadSlotName(FString("LoadSlot_1"));
 	LoadSlots.Add(1, LoadSlot_1);
 	LoadSlot_2 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
-	LoadSlot_2->LoadSlotName = FString("LoadSlot_2");
+	LoadSlot_2->SetLoadSlotName(FString("LoadSlot_2"));
 	LoadSlots.Add(2, LoadSlot_2);
 }
 
