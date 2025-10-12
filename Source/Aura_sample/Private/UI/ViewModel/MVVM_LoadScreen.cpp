@@ -26,12 +26,10 @@ UMVVM_LoadSlot* UMVVM_LoadScreen::GetLoadSlotViewModelByIndex(int32 Index) const
 	return LoadSlots.FindChecked(Index);
 }
 
-void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot, const FString EnteredName)
+void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot)
 {
 	// 取得 GameMode
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
-	// 設置玩家名稱並保存存檔槽資料
-	LoadSlots[Slot]->PlayerName = EnteredName;
 	AuraGameMode->SaveSlotData(LoadSlots[Slot], Slot);
 	LoadSlots[Slot]->InitializeSlot();
 }

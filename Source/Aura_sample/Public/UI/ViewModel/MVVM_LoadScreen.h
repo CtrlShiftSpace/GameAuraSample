@@ -30,7 +30,7 @@ public:
 
 	// 新建存檔按鈕被按下的事件
 	UFUNCTION(BlueprintCallable)
-	void NewSlotButtonPressed(int32 Slot, const FString EnteredName);
+	void NewSlotButtonPressed(int32 Slot);
 
 	// 開始遊戲按鈕被按下的事件
 	UFUNCTION(BlueprintCallable)

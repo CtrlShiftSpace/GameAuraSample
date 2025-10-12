@@ -26,10 +26,6 @@ public:
 	// 初始化讀取槽
 	void InitializeSlot();
 
-	// 設置玩家名稱
-	UPROPERTY()
-	FString PlayerName;
-
 	// 設置讀取槽名稱
 	UPROPERTY()
 	FString LoadSlotName;
@@ -37,5 +33,16 @@ public:
 	// 設置讀取槽索引
 	UPROPERTY()
 	FString SlotIndex;
+
+	/* Field Notifies */
 	
+	// 設置玩家名稱
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter)
+	FText PlayerName;
+
+	// 設定 PlayerName 由於 FieldNotify 需要 Setter
+	void SetPlayerName(const FText& InPlayerName);
+
+	// 取得 PlayerName 由於 FieldNotify 需要 Getter
+	FText GetPlayerName() const;
 };
