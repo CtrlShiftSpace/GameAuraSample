@@ -50,6 +50,12 @@ public:
 
 	// 載入存檔資料
 	void LoadData();
+
+	// 設置讀取槽位數量
+	void SetNumLoadSlots(int32 InNumLoadSlots);
+
+	// 獲取讀取槽位數量
+	int32 GetNumLoadSlots() const;
 private:
 
 	// 用來保存讀取槽位ViewModel TMap
@@ -64,4 +70,10 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UMVVM_LoadSlot> LoadSlot_2;
+
+	/* Field Notifies */
+	
+	// 讀取槽數量
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))
+	int32 NumLoadSlots;
 };
