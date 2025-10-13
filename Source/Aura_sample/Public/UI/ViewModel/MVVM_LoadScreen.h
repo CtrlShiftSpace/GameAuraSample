@@ -7,6 +7,10 @@
 #include "MVVM_LoadScreen.generated.h"
 
 class UMVVM_LoadSlot;
+
+// 用於得知當前選擇槽位的 Delegate 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSlotSelected);
+
 /**
  * 
  */
@@ -19,6 +23,10 @@ public:
 
 	// 初始化讀取槽位ViewModel
 	void InitializeLoadSlots();
+
+	// 當前選擇槽位的 Delegate 變數
+	UPROPERTY(BlueprintAssignable)
+	FSlotSelected SlotSelected;
 
 	// 讀取槽位ViewModel類別
 	UPROPERTY(EditDefaultsOnly)
