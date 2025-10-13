@@ -39,7 +39,9 @@ public:
 	// 選擇存檔按鈕被按下的事件
 	UFUNCTION(BlueprintCallable)
 	void SelectSlotButtonPressed(int32 Slot);
-	
+
+	// 載入存檔資料
+	void LoadData();
 private:
 
 	// 用來保存讀取槽位ViewModel TMap

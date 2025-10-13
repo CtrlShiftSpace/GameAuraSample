@@ -6,6 +6,15 @@
 #include "GameFramework/SaveGame.h"
 #include "LoadScreenSaveGame.generated.h"
 
+// 存檔槽位狀態
+UENUM(BlueprintType)
+enum ESaveSlotStatus
+{
+	Vacant,
+	EnterName,
+	Taken
+};
+
 /**
  * 
  */
@@ -27,4 +36,8 @@ public:
 	// 玩家名稱
 	UPROPERTY()
 	FString PlayerName = FString("Default Name");
+
+	// 存檔槽位狀態
+	UPROPERTY()
+	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = ESaveSlotStatus::Vacant;
 };

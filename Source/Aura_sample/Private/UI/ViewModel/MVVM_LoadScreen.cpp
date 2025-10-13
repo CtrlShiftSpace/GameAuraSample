@@ -31,6 +31,8 @@ void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot)
 	// 取得 GameMode
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
 	AuraGameMode->SaveSlotData(LoadSlots[Slot], Slot);
+	// 更新存檔槽位狀態
+	LoadSlots[Slot]->SlotStatus = ESaveSlotStatus::Taken;
 	LoadSlots[Slot]->InitializeSlot();
 }
 
@@ -42,4 +44,20 @@ void UMVVM_LoadScreen::NewGameButtonPressed(int32 Slot)
 void UMVVM_LoadScreen::SelectSlotButtonPressed(int32 Slot)
 {
 	
+}
+
+void UMVVM_LoadScreen::LoadData()
+{
+	// 取得 GameMode
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	// 依序載入每個存檔槽位的資料
+	for (const TTuple<int32, UMVVM_LoadSlot*> LoadSlot : LoadSlots)
+	{
+		ULoadScreenSaveGame* SaveObject = AuraGameMode->GetSaveSlotData(LoadSlot.Value->GetLoadSlotName(), LoadSlot.Key);
+		// 取得存檔槽位狀態
+		TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = SaveObject->SaveSlotStatus;
+		LoadSlot.Value->SetPlayerName(FText::FromString(SaveObject->PlayerName));
+		LoadSlot.Value->SlotStatus = SaveSlotStatus;
+		LoadSlot.Value->InitializeSlot();
+	}
 }

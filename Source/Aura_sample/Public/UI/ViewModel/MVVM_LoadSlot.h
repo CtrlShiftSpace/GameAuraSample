@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
+#include "Game/LoadScreenSaveGame.h"
 #include "MVVM_LoadSlot.generated.h"
 
 // 用於切換WidgetSwitcher的索引
@@ -30,6 +31,10 @@ public:
 	UPROPERTY()
 	FString SlotIndex;
 
+	// 讀取槽狀態
+	UPROPERTY()
+	TEnumAsByte<ESaveSlotStatus> SlotStatus;
+
 	/* Field Notifies */
 	
 	// 設置玩家名稱
@@ -51,6 +56,8 @@ public:
 	FString GetLoadSlotName() const;
 
 private:
+
+	/* Field Notifies */
 	
 	// 設置讀取槽名稱
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))

@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "AuraGameModeBase.generated.h"
 
+class ULoadScreenSaveGame;
 class USaveGame;
 class UMVVM_LoadSlot;
 class UAbilityInfo;
@@ -28,6 +29,8 @@ public:
 
 	// 儲存槽資料
 	void SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex);
+	// 取得SaveGame資料
+	ULoadScreenSaveGame* GetSaveSlotData(const FString& SlotName, int32 SlotIndex);
 
 	// 指定 SaveGame 類別
 	UPROPERTY(EditDefaultsOnly)

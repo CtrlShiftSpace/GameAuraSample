@@ -20,4 +20,7 @@ void ALoadScreenHUD::BeginPlay()
 	LoadScreenWidget->AddToViewport();
 	// 在產生 LoadSlots 後呼叫
 	LoadScreenWidget->BlueprintInitializeWidget();
+
+	// 讀取存檔資料
+	LoadScreenViewModel->LoadData();
 }

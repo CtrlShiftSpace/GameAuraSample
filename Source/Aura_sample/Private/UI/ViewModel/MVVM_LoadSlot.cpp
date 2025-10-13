@@ -5,8 +5,8 @@
 
 void UMVVM_LoadSlot::InitializeSlot()
 {
-	// TODO: 根據 Slot 資訊取得相關資料
-	SetWidgetSwitcherIndex.Broadcast(2);
+	const int32 WidgetSwitcherIndex = SlotStatus.GetValue();
+	SetWidgetSwitcherIndex.Broadcast(WidgetSwitcherIndex);
 }
 
 void UMVVM_LoadSlot::SetPlayerName(const FText& InPlayerName)
