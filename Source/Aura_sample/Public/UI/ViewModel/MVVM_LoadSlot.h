@@ -9,6 +9,8 @@
 
 // 用於切換WidgetSwitcher的索引
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSetWidgetSwitcherIndex, int32, WidgetSwitcherIndex);
+// 用於啟用或禁用選擇槽位按鈕
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEnableSelectSlotButton, bool, bEnable);
 
 /**
  * 
@@ -23,6 +25,10 @@ public:
 	// 切換 WidgetSwitcher 的 Delegate 變數
 	UPROPERTY(BlueprintAssignable)
 	FSetWidgetSwitcherIndex SetWidgetSwitcherIndex;
+
+	// 啟用或禁用選擇槽位按鈕的 Delegate 變數
+	UPROPERTY(BlueprintAssignable)
+	FEnableSelectSlotButton EnableSelectSlotButton;
 
 	// 初始化讀取槽
 	void InitializeSlot();
