@@ -17,6 +17,8 @@ void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 	// 儲存玩家名稱
 	LoadScreenSaveGame->PlayerName = LoadSlot->GetPlayerName().ToString();
 	LoadScreenSaveGame->SaveSlotStatus = ESaveSlotStatus::Taken;
+	// 儲存所在關卡地圖名稱
+	LoadScreenSaveGame->MapName = LoadSlot->GetMapName();
 
 	// 將 SaveGameObject 儲存
 	UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame, LoadSlot->GetLoadSlotName(), SlotIndex);

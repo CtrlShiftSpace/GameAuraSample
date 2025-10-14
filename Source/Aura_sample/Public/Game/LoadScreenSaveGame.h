@@ -37,6 +37,10 @@ public:
 	UPROPERTY()
 	FString PlayerName = FString("Default Name");
 
+	// 關卡地圖名稱
+	UPROPERTY()
+	FString MapName = FString("Default Map Name");
+
 	// 存檔槽位狀態
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = ESaveSlotStatus::Vacant;
