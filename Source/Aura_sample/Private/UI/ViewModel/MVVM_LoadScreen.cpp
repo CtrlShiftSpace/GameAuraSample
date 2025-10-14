@@ -36,9 +36,11 @@ void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot)
 {
 	// 取得 GameMode
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
-	AuraGameMode->SaveSlotData(LoadSlots[Slot], Slot);
 	// 更新存檔槽位狀態
 	LoadSlots[Slot]->SlotStatus = ESaveSlotStatus::Taken;
+	// 設置預設關卡地圖名稱
+	LoadSlots[Slot]->SetMapName(AuraGameMode->DefaultMapName);
+	AuraGameMode->SaveSlotData(LoadSlots[Slot], Slot);
 	LoadSlots[Slot]->InitializeSlot();
 }
 

@@ -15,7 +15,7 @@ void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 	// 將 SaveGame 物件轉換為 ULoadScreenSaveGame 類型
 	ULoadScreenSaveGame* LoadScreenSaveGame = Cast<ULoadScreenSaveGame>(SaveGameObject);
 	// 儲存玩家名稱
-	LoadScreenSaveGame->PlayerName = LoadSlot->PlayerName.ToString();
+	LoadScreenSaveGame->PlayerName = LoadSlot->GetPlayerName().ToString();
 	LoadScreenSaveGame->SaveSlotStatus = ESaveSlotStatus::Taken;
 
 	// 將 SaveGameObject 儲存
@@ -43,4 +43,11 @@ void AAuraGameModeBase::DeleteSlot(const FString& SlotName, int32 SlotIndex)
 	{
 		UGameplayStatics::DeleteGameInSlot(SlotName, SlotIndex);
 	}
+}
+
+void AAuraGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+	// 將預設地圖加入 Maps 中
+	Maps.Add(DefaultMapName, DefaultMap);
 }

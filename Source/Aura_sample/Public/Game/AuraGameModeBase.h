@@ -37,4 +37,20 @@ public:
 	// 指定 SaveGame 類別
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<USaveGame> LoadScreenSaveGameClass;
+	
+	// 遊戲開始時載入的地圖名稱
+	UPROPERTY(EditDefaultsOnly)
+	FString DefaultMapName;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSoftObjectPtr<UWorld> DefaultMap;
+	
+	// 關於 TSoftObjectPtr 不會主動載入資源，只有在使用時才載入
+	// 主要用於動態載入資源場景，避免一次載入全部地圖等
+	// 遊戲關卡地圖名稱與對應地圖資源
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FString, TSoftObjectPtr<UWorld>> Maps;
+	
+protected:
+	void BeginPlay() override;
 };

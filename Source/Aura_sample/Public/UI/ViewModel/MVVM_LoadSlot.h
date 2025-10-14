@@ -41,18 +41,14 @@ public:
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SlotStatus;
 
-	/* Field Notifies */
-	
-	// 設置玩家名稱
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter)
-	FText PlayerName;
-
 	/* 由於 FieldNotify 需要 Setter */
 	
 	// 設定 PlayerName 
 	void SetPlayerName(const FText& InPlayerName);
 	// 設定 LoadSlotName
 	void SetLoadSlotName(FString InLoadSlotName);
+	// 設定 MapName
+	void SetMapName(FString InMapName);
 
 	/* 由於 FieldNotify 需要 Getter */
 	
@@ -60,6 +56,8 @@ public:
 	FText GetPlayerName() const;
 	// 取得 LoadSlotName
 	FString GetLoadSlotName() const;
+	// 取得 MapName
+	FString GetMapName() const;
 
 private:
 
@@ -68,4 +66,12 @@ private:
 	// 設置讀取槽名稱
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))
 	FString LoadSlotName;
+
+	// 設置玩家名稱
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))
+	FText PlayerName;
+
+	// 關卡地圖名稱
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))
+	FString MapName;
 };
