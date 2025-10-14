@@ -12,12 +12,15 @@ void UMVVM_LoadScreen::InitializeLoadSlots()
 	// 創建並初始化三個讀取槽位ViewModel元件，並將它們添加到LoadSlots TMap中
 	LoadSlot_0 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
 	LoadSlot_0->SetLoadSlotName(FString("LoadSlot_0"));
+	LoadSlot_0->SlotIndex = 0;
 	LoadSlots.Add(0, LoadSlot_0);
 	LoadSlot_1 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
 	LoadSlot_1->SetLoadSlotName(FString("LoadSlot_1"));
+	LoadSlot_1->SlotIndex = 1;
 	LoadSlots.Add(1, LoadSlot_1);
 	LoadSlot_2 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
 	LoadSlot_2->SetLoadSlotName(FString("LoadSlot_2"));
+	LoadSlot_2->SlotIndex = 2;
 	LoadSlots.Add(2, LoadSlot_2);
 
 	// 設置讀取槽位數量
@@ -57,6 +60,21 @@ void UMVVM_LoadScreen::SelectSlotButtonPressed(int32 Slot)
 		{
 			LoadSlot.Value->EnableSelectSlotButton.Broadcast(true);
 		}
+	}
+	SelectedSlot = LoadSlots[Slot];
+}
+
+void UMVVM_LoadScreen::DeleteButtonPressed()
+{
+	if (IsValid(SelectedSlot))
+	{
+		// 刪除存檔槽位
+		AAuraGameModeBase::DeleteSlot(SelectedSlot->GetLoadSlotName(), SelectedSlot->SlotIndex);
+		// 更新存檔槽位狀態
+		SelectedSlot->SlotStatus = Vacant;
+		SelectedSlot->SetPlayerName(FText::FromString(FString("Default Name")));
+		SelectedSlot->InitializeSlot();
+		SelectedSlot->EnableSelectSlotButton.Broadcast(true);
 	}
 }
 

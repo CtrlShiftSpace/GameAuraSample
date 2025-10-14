@@ -35,7 +35,7 @@ public:
 
 	// 設置讀取槽索引
 	UPROPERTY()
-	FString SlotIndex;
+	int32 SlotIndex;
 
 	// 讀取槽狀態
 	UPROPERTY()

@@ -48,6 +48,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SelectSlotButtonPressed(int32 Slot);
 
+	// 刪除存檔按鈕被按下的事件
+	UFUNCTION(BlueprintCallable)
+	void DeleteButtonPressed();
+	
 	// 載入存檔資料
 	void LoadData();
 
@@ -70,6 +74,10 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UMVVM_LoadSlot> LoadSlot_2;
+
+	// 當前選擇的讀取槽位ViewModel
+	UPROPERTY()
+	UMVVM_LoadSlot* SelectedSlot;
 
 	/* Field Notifies */
 	
