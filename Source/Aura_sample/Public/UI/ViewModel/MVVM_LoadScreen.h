@@ -51,6 +51,10 @@ public:
 	// 刪除存檔按鈕被按下的事件
 	UFUNCTION(BlueprintCallable)
 	void DeleteButtonPressed();
+
+	// 開始遊戲按鈕被按下的事件
+	UFUNCTION(BlueprintCallable)
+	void PlayButtonPressed();
 	
 	// 載入存檔資料
 	void LoadData();

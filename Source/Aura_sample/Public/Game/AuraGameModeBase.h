@@ -33,6 +33,9 @@ public:
 	ULoadScreenSaveGame* GetSaveSlotData(const FString& SlotName, int32 SlotIndex);
 	// 刪除指定存檔槽位
 	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
+
+	// 前往指定地圖關卡
+	void TravelToMap(UMVVM_LoadSlot* Slot);
 	
 	// 指定 SaveGame 類別
 	UPROPERTY(EditDefaultsOnly)
