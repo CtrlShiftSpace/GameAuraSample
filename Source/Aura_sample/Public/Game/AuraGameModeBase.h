@@ -47,6 +47,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSoftObjectPtr<UWorld> DefaultMap;
+
+	// 預設玩家生成點標籤
+	UPROPERTY(EditDefaultsOnly)
+	FName DefaultPlayerStartTag;
 	
 	// 關於 TSoftObjectPtr 不會主動載入資源，只有在使用時才載入
 	// 主要用於動態載入資源場景，避免一次載入全部地圖等
