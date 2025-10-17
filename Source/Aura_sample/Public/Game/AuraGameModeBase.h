@@ -53,6 +53,9 @@ public:
 	// 遊戲關卡地圖名稱與對應地圖資源
 	UPROPERTY(EditDefaultsOnly)
 	TMap<FString, TSoftObjectPtr<UWorld>> Maps;
+
+	// 覆寫玩家生成位置
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 	
 protected:
 	void BeginPlay() override;
