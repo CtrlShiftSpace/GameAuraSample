@@ -50,6 +50,10 @@ public:
 	// 設定 MapName
 	void SetMapName(FString InMapName);
 
+	// 用來記錄 Player Start Tag 以利於得知要從哪個 Player Start 生成玩家
+	UPROPERTY()
+	FName PlayerStartTag;
+
 	/* 由於 FieldNotify 需要 Getter */
 	
 	// 取得 PlayerName 

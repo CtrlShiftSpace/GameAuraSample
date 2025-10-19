@@ -41,6 +41,10 @@ public:
 	UPROPERTY()
 	FString MapName = FString("Default Map Name");
 
+	// 儲存玩家生成點標籤
+	UPROPERTY()
+	FName PlayerStartTag;
+
 	// 存檔槽位狀態
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = ESaveSlotStatus::Vacant;

@@ -41,6 +41,8 @@ void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot)
 	LoadSlots[Slot]->SlotStatus = ESaveSlotStatus::Taken;
 	// 設置預設關卡地圖名稱
 	LoadSlots[Slot]->SetMapName(AuraGameMode->DefaultMapName);
+	// 設置 Player Start Tag
+	LoadSlots[Slot]->PlayerStartTag = AuraGameMode->DefaultPlayerStartTag;
 	AuraGameMode->SaveSlotData(LoadSlots[Slot], Slot);
 	LoadSlots[Slot]->InitializeSlot();
 
@@ -90,8 +92,10 @@ void UMVVM_LoadScreen::DeleteButtonPressed()
 void UMVVM_LoadScreen::PlayButtonPressed()
 {
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance());
 	if (IsValid(SelectedSlot))
 	{
+		AuraGameInstance->PlayerStartTag = SelectedSlot->PlayerStartTag;
 		AuraGameMode->TravelToMap(SelectedSlot);
 	}
 }
@@ -110,6 +114,7 @@ void UMVVM_LoadScreen::LoadData()
 		LoadSlot.Value->SlotStatus = SaveSlotStatus;
 		LoadSlot.Value->InitializeSlot();
 		LoadSlot.Value->SetMapName(SaveObject->MapName);
+		LoadSlot.Value->PlayerStartTag = SaveObject->PlayerStartTag;
 	}
 }
 
