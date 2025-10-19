@@ -11,6 +11,7 @@
 #include "UI/HUD/AuraHUD.h"
 #include "Player/AuraPlayerController.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Game/AuraGameInstance.h"
@@ -200,6 +201,20 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 		}
 		// 將 CheckpointTag 存入 SaveData 的 PlayerStartTag 屬性中
 		SaveData->PlayerStartTag = CheckpointTag;
+
+		// 從 PlayerState 取得玩家相關資料並存入 SaveData 中
+		if (AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>())
+		{
+			SaveData->PlayerLevel = AuraPlayerState->GetPlayerLevel();
+			SaveData->XP = AuraPlayerState->GetXP();
+			SaveData->SpellPoints = AuraPlayerState->GetSpellPoints();
+			SaveData->AttributePoints = AuraPlayerState->GetAttributePoints();
+		}
+		SaveData->Strength = UAuraAttributeSet::GetStrengthAttribute().GetNumericValue(GetAttributeSet());
+		SaveData->Intelligence = UAuraAttributeSet::GetIntelligenceAttribute().GetNumericValue(GetAttributeSet());
+		SaveData->Resilience = UAuraAttributeSet::GetResilienceAttribute().GetNumericValue(GetAttributeSet());
+		SaveData->Vigor = UAuraAttributeSet::GetVigorAttribute().GetNumericValue(GetAttributeSet());
+		
 		// 呼叫 AuraGameMode 的 SaveInGameProgressData 方法來存檔
 		AuraGameMode->SaveInGameProgressData(SaveData);
 	}

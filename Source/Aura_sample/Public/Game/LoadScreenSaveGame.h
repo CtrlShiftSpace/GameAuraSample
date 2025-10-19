@@ -48,4 +48,37 @@ public:
 	// 存檔槽位狀態
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = ESaveSlotStatus::Vacant;
+
+	/* 儲存 Player 資訊 */
+
+	// 玩家等級
+	UPROPERTY()
+	int32 PlayerLevel = 0;
+
+	// 玩家經驗值
+	UPROPERTY()
+	int32 XP = 0;
+
+	// 技能點數
+	UPROPERTY()
+	int32 SpellPoints = 0;
+
+	// 屬性點數
+	UPROPERTY()
+	int32 AttributePoints = 0;
+
+	/* 儲存 Player Attribute Set 資訊 */
+	
+	UPROPERTY()
+	float Strength = 0.f;
+
+	UPROPERTY()
+	float Intelligence = 0.f;
+
+	UPROPERTY()
+	float Resilience = 0.f;
+
+	UPROPERTY()
+	float Vigor = 0.f;
+
 };
