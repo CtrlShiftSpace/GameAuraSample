@@ -63,5 +63,8 @@ public:
 	// 隱藏魔法陣
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void HideMagicCircle();
-	
+
+	// 存檔進度
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SaveProgress(const FName& CheckpointTag);
 };

@@ -33,6 +33,10 @@ public:
 	ULoadScreenSaveGame* GetSaveSlotData(const FString& SlotName, int32 SlotIndex);
 	// 刪除指定存檔槽位
 	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
+	// 取得目前SaveGame資料
+	ULoadScreenSaveGame* RetrieveInGameSaveData();
+	// 儲存遊戲進度資料
+	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject);
 
 	// 前往指定地圖關卡
 	void TravelToMap(UMVVM_LoadSlot* Slot);

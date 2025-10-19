@@ -13,6 +13,10 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
+#include "Game/AuraGameInstance.h"
+#include "Game/AuraGameModeBase.h"
+#include "Game/LoadScreenSaveGame.h"
+#include "Kismet/GameplayStatics.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -178,6 +182,26 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 	{
 		AuraPlayerController->HideMagicCircle();
 		AuraPlayerController->bShowMouseCursor = true;
+	}
+}
+
+void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
+{
+	// 取得 GameMode 並轉為 AuraGameMode 類別
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (AuraGameMode )
+	{
+		// 從 AuraGameMode 類別取得用來存檔物件
+		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
+		// 如果不存在時就 return 
+		if (SaveData == nullptr)
+		{
+			return;
+		}
+		// 將 CheckpointTag 存入 SaveData 的 PlayerStartTag 屬性中
+		SaveData->PlayerStartTag = CheckpointTag;
+		// 呼叫 AuraGameMode 的 SaveInGameProgressData 方法來存檔
+		AuraGameMode->SaveInGameProgressData(SaveData);
 	}
 }
 
