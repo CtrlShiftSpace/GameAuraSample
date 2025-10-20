@@ -60,7 +60,10 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 
 	// 初始化Server的 Ability Actor Info
 	InitAbilityActorInfo();
-
+	LoadProgress();
+	
+	// TODO 讀取玩家資料中的 Abilities
+	
 	AddCharacterAbilities();
 }
 
@@ -214,7 +217,9 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 		SaveData->Intelligence = UAuraAttributeSet::GetIntelligenceAttribute().GetNumericValue(GetAttributeSet());
 		SaveData->Resilience = UAuraAttributeSet::GetResilienceAttribute().GetNumericValue(GetAttributeSet());
 		SaveData->Vigor = UAuraAttributeSet::GetVigorAttribute().GetNumericValue(GetAttributeSet());
-		
+
+		// 標記不是第一次存檔
+		SaveData->bFirstTimeLoadIn = false;
 		// 呼叫 AuraGameMode 的 SaveInGameProgressData 方法來存檔
 		AuraGameMode->SaveInGameProgressData(SaveData);
 	}
@@ -225,6 +230,42 @@ int32 AAuraCharacter::GetPlayerLevel_Implementation()
 	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	return AuraPlayerState->GetPlayerLevel();
+}
+
+void AAuraCharacter::LoadProgress()
+{
+	// 取得 GameMode 並轉為 AuraGameMode 類別
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (AuraGameMode )
+	{
+		// 從 AuraGameMode 類別取得用來讀檔物件
+		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
+		// 如果不存在時就 return 
+		if (SaveData == nullptr)
+		{
+			return;
+		}
+
+		// 取得存檔中的 PlayerState 資料並設定到目前的 PlayerState 中
+		if (AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>())
+		{
+			AuraPlayerState->SetLevel(SaveData->PlayerLevel);
+			AuraPlayerState->SetXP(SaveData->XP);
+			AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
+			AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
+		}
+
+		// 如果是第一次載入遊戲，則初始化能力系統並添加角色能力
+		if (SaveData->bFirstTimeLoadIn)
+		{
+			InitAbilityActorInfo();
+			AddCharacterAbilities();
+		}
+		else
+		{
+			
+		}
+	}
 }
 
 void AAuraCharacter::OnRep_Stunned()
@@ -284,7 +325,5 @@ void AAuraCharacter::InitAbilityActorInfo()
 			AuraHUD->InitOverlay(AuraPlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
 		}
 	}
-
-	InitializeDefaultAttributes();
 }
 

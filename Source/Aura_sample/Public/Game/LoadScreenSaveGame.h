@@ -49,6 +49,10 @@ public:
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = ESaveSlotStatus::Vacant;
 
+	// 是否為第一次載入遊戲
+	UPROPERTY()
+	bool bFirstTimeLoadIn = true;
+	
 	/* 儲存 Player 資訊 */
 
 	// 玩家等級
