@@ -49,6 +49,9 @@ public:
 	void SetLoadSlotName(FString InLoadSlotName);
 	// 設定 MapName
 	void SetMapName(FString InMapName);
+	// 設定 PlayerLevel
+	void SetPlayerLevel(int32 InLevel);
+	
 
 	// 用來記錄 Player Start Tag 以利於得知要從哪個 Player Start 生成玩家
 	UPROPERTY()
@@ -62,6 +65,9 @@ public:
 	FString GetLoadSlotName() const;
 	// 取得 MapName
 	FString GetMapName() const;
+	// 取得 PlayerLevel
+	int32 GetPlayerLevel() const;
+	
 
 private:
 
@@ -75,7 +81,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))
 	FText PlayerName;
 
-	// 關卡地圖名稱
+	// 角色等級
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))
 	FString MapName;
+	
+	// 角色等級
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))
+	int32 PlayerLevel;
 };
