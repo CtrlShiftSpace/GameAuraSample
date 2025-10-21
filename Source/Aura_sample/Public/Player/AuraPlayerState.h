@@ -13,6 +13,8 @@ class UAttributeSet;
 
 // 當數值變動時的 Delegate
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /*StatValue*/);
+// 當等級變化時的 Delegate
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnLevelChanged, int32 /*StatValue*/, bool /*bLevelUp*/);
 
 /**
  * 
@@ -51,7 +53,7 @@ public:
 	// XP 改變的 Delegate
 	FOnPlayerStatChanged OnXPChangedDelegate;
 	// 等級改變的 Delegate
-	FOnPlayerStatChanged OnLevelChangedDelegate;
+	FOnLevelChanged OnLevelChangedDelegate;
 	// 屬性點數改變的 Delegate
 	FOnPlayerStatChanged OnAttributePointsChangedDelegate;
 	// 技能點數改變的 Delegate

@@ -11,6 +11,7 @@
 #include "UI/HUD/AuraHUD.h"
 #include "Player/AuraPlayerController.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
@@ -61,10 +62,7 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	// 初始化Server的 Ability Actor Info
 	InitAbilityActorInfo();
 	LoadProgress();
-	
-	// TODO 讀取玩家資料中的 Abilities
-	
-	AddCharacterAbilities();
+
 }
 
 void AAuraCharacter::OnRep_PlayerState()
@@ -245,25 +243,24 @@ void AAuraCharacter::LoadProgress()
 		{
 			return;
 		}
-
-		// 取得存檔中的 PlayerState 資料並設定到目前的 PlayerState 中
-		if (AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>())
-		{
-			AuraPlayerState->SetLevel(SaveData->PlayerLevel);
-			AuraPlayerState->SetXP(SaveData->XP);
-			AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
-			AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
-		}
-
+		
 		// 如果是第一次載入遊戲，則初始化能力系統並添加角色能力
 		if (SaveData->bFirstTimeLoadIn)
 		{
-			InitAbilityActorInfo();
+			InitializeDefaultAttributes();
 			AddCharacterAbilities();
 		}
 		else
 		{
-			
+			// 取得存檔中的 PlayerState 資料並設定到目前的 PlayerState 中
+			if (AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>())
+			{
+				AuraPlayerState->SetLevel(SaveData->PlayerLevel);
+				AuraPlayerState->SetXP(SaveData->XP);
+				AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
+				AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
+			}
+			UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this, AbilitySystemComponent, SaveData);
 		}
 	}
 }

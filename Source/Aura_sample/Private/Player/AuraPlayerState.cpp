@@ -44,7 +44,7 @@ void AAuraPlayerState::SetXP(int32 InXP)
 void AAuraPlayerState::SetLevel(int32 InLevel)
 {
 	Level = InLevel;
-	OnLevelChangedDelegate.Broadcast(Level);
+	OnLevelChangedDelegate.Broadcast(Level, false);
 }
 
 void AAuraPlayerState::SetAttributePoints(int32 InPoints)
@@ -62,21 +62,20 @@ void AAuraPlayerState::SetSpellPoints(int32 InPoints)
 void AAuraPlayerState::AddToXP(int32 InXP)
 {
 	XP += InXP;
-	// Server 端執行 Broadcast
 	OnXPChangedDelegate.Broadcast(XP);
 }
 
 void AAuraPlayerState::AddToLevel(int32 InLevel)
 {
 	Level += InLevel;
-	OnLevelChangedDelegate.Broadcast(Level);
+	OnLevelChangedDelegate.Broadcast(Level, true);
 }
 
 void AAuraPlayerState::AddToAttributePoints(int32 InAttributePoints)
 {
 	AttributePoints += InAttributePoints;
 	// Server 端執行 Broadcast
-	OnAttributePointsChangedDelegate.Broadcast(InAttributePoints);
+	OnAttributePointsChangedDelegate.Broadcast(AttributePoints);
 }
 
 void AAuraPlayerState::AddToSpellPoints(int32 InSpellPoints)
@@ -89,7 +88,7 @@ void AAuraPlayerState::AddToSpellPoints(int32 InSpellPoints)
 void AAuraPlayerState::OnRep_Level(int32 OldLevel)
 {
 	// 在 Client 端也要執行 Broadcast
-	OnLevelChangedDelegate.Broadcast(Level);
+	OnLevelChangedDelegate.Broadcast(Level, true);
 }
 
 void AAuraPlayerState::OnRep_XP(int32 OldXP)
