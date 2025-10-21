@@ -13,6 +13,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Game/AuraGameInstance.h"
@@ -218,6 +219,41 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 
 		// 標記不是第一次存檔
 		SaveData->bFirstTimeLoadIn = false;
+
+		// 只有 Server 端可以存檔
+		if (!HasAuthority())
+		{
+			return;
+		}
+
+		// 取得 ASC
+		UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+		FForeachAbility SaveAbilityDelegate;
+		SaveAbilityDelegate.BindLambda(
+			[this, AuraASC, SaveData](const FGameplayAbilitySpec& AbilitySpec)
+			{
+				// 先使用 Ability Spec 取得 Ability Tag
+				const FGameplayTag AbilityTag = AuraASC->GetAbilityTagFromSpec(AbilitySpec);
+				// 再透過 Ability Tag 取得 Ability Info
+				UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(this);
+				FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+
+				// 將要儲存的資訊存入 SavedAbility 結構中
+				FSavedAbility SavedAbility;
+				SavedAbility.GameplayAbility = Info.Ability;
+				SavedAbility.AbilityLevel = AbilitySpec.Level;
+				SavedAbility.AbilitySlot = AuraASC->GetSlotFromAbilityTag(AbilityTag);
+				SavedAbility.AbilityStatus = AuraASC->GetStatusFromAbilityTag(AbilityTag);
+				SavedAbility.AbilityTag = AbilityTag;
+				SavedAbility.AbilityType = Info.AbilityType;
+
+				// 將 SavedAbility 加入到 SaveData 的 SavedAbilities 陣列中
+				SaveData->SavedAbilities.Add(SavedAbility);
+			}
+		);
+		// 使用 ForEachAbility 來遍歷所有能力並會放到 SavedAbilities 中
+		AuraASC->ForEachAbility(SaveAbilityDelegate);
+		
 		// 呼叫 AuraGameMode 的 SaveInGameProgressData 方法來存檔
 		AuraGameMode->SaveInGameProgressData(SaveData);
 	}
