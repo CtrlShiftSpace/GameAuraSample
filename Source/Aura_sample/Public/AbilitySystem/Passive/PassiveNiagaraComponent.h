@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "NiagaraComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "PassiveNiagaraComponent.generated.h"
 
 /**
@@ -25,4 +26,6 @@ protected:
 	virtual void BeginPlay() override;
 	// 被動技能啟動與停用的事件
 	void OnPassiveActivate(const FGameplayTag& AbilityTag, bool bActivate);
+	// 檢查是否裝備該被動技能並啟用特效
+	void ActivateIfEquipped(UAuraAbilitySystemComponent* AuraASC);
 };

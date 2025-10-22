@@ -229,6 +229,8 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 		// 取得 ASC
 		UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 		FForeachAbility SaveAbilityDelegate;
+		// 清空之前的儲存能力陣列
+		SaveData->SavedAbilities.Empty();
 		SaveAbilityDelegate.BindLambda(
 			[this, AuraASC, SaveData](const FGameplayAbilitySpec& AbilitySpec)
 			{
@@ -248,7 +250,7 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 				SavedAbility.AbilityType = Info.AbilityType;
 
 				// 將 SavedAbility 加入到 SaveData 的 SavedAbilities 陣列中
-				SaveData->SavedAbilities.Add(SavedAbility);
+				SaveData->SavedAbilities.AddUnique(SavedAbility);
 			}
 		);
 		// 使用 ForEachAbility 來遍歷所有能力並會放到 SavedAbilities 中
@@ -288,6 +290,13 @@ void AAuraCharacter::LoadProgress()
 		}
 		else
 		{
+			if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+			{
+				// 從存檔資料中添加角色能力
+				AuraASC->AddCharacterAbilitesFromSaveData(SaveData);
+				AuraASC->UpdateAbilityStatus(SaveData->PlayerLevel);
+			}
+			
 			// 取得存檔中的 PlayerState 資料並設定到目前的 PlayerState 中
 			if (AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>())
 			{

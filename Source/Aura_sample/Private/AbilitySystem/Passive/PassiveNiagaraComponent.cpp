@@ -4,6 +4,7 @@
 #include "AbilitySystem/Passive/PassiveNiagaraComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Interaction/CombatInterface.h"
 
@@ -22,6 +23,7 @@ void UPassiveNiagaraComponent::BeginPlay()
 	{
 		// 如果有 ASC 就綁定事件
 		AuraASC->ActivatePassiveEffect.AddUObject(this, &UPassiveNiagaraComponent::OnPassiveActivate);
+		ActivateIfEquipped(AuraASC);
 	}
 	else if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetOwner()))
 	{
@@ -33,6 +35,7 @@ void UPassiveNiagaraComponent::BeginPlay()
 				{
 					// 如果有 ASC 就綁定事件
 					AuraASC->ActivatePassiveEffect.AddUObject(this, &UPassiveNiagaraComponent::OnPassiveActivate);
+					ActivateIfEquipped(AuraASC);
 				}
 			}
 		);
@@ -52,6 +55,20 @@ void UPassiveNiagaraComponent::OnPassiveActivate(const FGameplayTag& AbilityTag,
 		else
 		{
 			Deactivate();
+		}
+	}
+}
+
+void UPassiveNiagaraComponent::ActivateIfEquipped(UAuraAbilitySystemComponent* AuraASC)
+{
+	// 檢查是否在啟動時就已經給予被動能力
+	const bool bStartupAbilitiesActivated = AuraASC->bStartupAbilitiesGiven;
+	if (bStartupAbilitiesActivated)
+	{
+		// 如果已經給予被動能力，則檢查是否裝備，裝備時啟動特效
+		if (AuraASC->GetStatusFromAbilityTag(PassiveSpellTag) == FAuraGameplayTags::Get().Abilities_Status_Equipped)
+		{
+			Activate();
 		}
 	}
 }

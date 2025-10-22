@@ -46,6 +46,12 @@ struct FSavedAbility
 	int32 AbilityLevel;
 };
 
+inline bool operator==(const FSavedAbility& Left, const FSavedAbility& Right)
+{
+	// 比較兩個 FSavedAbility 結構的 AbilityTag 是否相等
+	return Left.AbilityTag.MatchesTagExact(Right.AbilityTag);
+}
+
 /**
  * 
  */
