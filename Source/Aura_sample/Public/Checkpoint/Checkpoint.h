@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerStart.h"
+#include "Interaction/SaveInterface.h"
 #include "Checkpoint.generated.h"
 
 class USphereComponent;
@@ -11,13 +12,17 @@ class USphereComponent;
  * 
  */
 UCLASS()
-class AURA_SAMPLE_API ACheckpoint : public APlayerStart
+class AURA_SAMPLE_API ACheckpoint : public APlayerStart, public ISaveInterface
 {
 	GENERATED_BODY()
 
 public:
 	ACheckpoint(const FObjectInitializer& ObjectInitializer);
 
+	// 是否位於此存檔位置
+	UPROPERTY(BlueprintReadOnly, SaveGame)
+	bool bReached = false;
+protected:
 	// 接觸到其他物體的重疊函式
 	UFUNCTION()
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

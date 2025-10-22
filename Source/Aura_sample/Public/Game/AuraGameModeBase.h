@@ -37,7 +37,9 @@ public:
 	ULoadScreenSaveGame* RetrieveInGameSaveData();
 	// 儲存遊戲進度資料
 	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject);
-
+	// 儲存世界狀態
+	void SaveWorldState(UWorld* World);
+	
 	// 前往指定地圖關卡
 	void TravelToMap(UMVVM_LoadSlot* Slot);
 	

@@ -3,10 +3,13 @@
 
 #include "Game/AuraGameModeBase.h"
 
+#include "EngineUtils.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/PlayerStart.h"
+#include "Interaction/SaveInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "UI/ViewModel/MVVM_LoadSlot.h"
 
 void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
@@ -72,6 +75,78 @@ void AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject)
 	AuraGameInstance->PlayerStartTag = SaveObject->PlayerStartTag;
 
 	UGameplayStatics::SaveGameToSlot(SaveObject, InGameLoadSlotName, InGameLoadSlotIndex);
+}
+
+void AAuraGameModeBase::SaveWorldState(UWorld* World)
+{
+	// 儲存當前世界的地圖名稱
+	FString WorldName = World->GetMapName();
+	// 移除地圖名稱的前綴字串
+	WorldName.RemoveFromStart(World->StreamingLevelsPrefix);
+
+	// 取得遊戲實例
+	UAuraGameInstance* AuraGI = GetGameInstance<UAuraGameInstance>();
+	check(AuraGI);
+
+	// 取得存檔資料
+	if (ULoadScreenSaveGame* SaveGame = GetSaveSlotData(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex))
+	{
+		// 檢查是否有儲存過此地圖關卡資訊
+		if (!SaveGame->HasMap(WorldName))
+		{
+			// 尚未儲存過此地圖關卡，則新建 FSavedMap 加入到 SavedMaps 陣列中
+			FSavedMap NewSavedMap;
+			NewSavedMap.MapAssetName = WorldName;
+			SaveGame->SavedMaps.Add(NewSavedMap);
+		}
+
+		// 取得對應地圖名稱的已儲存地圖資訊
+		FSavedMap SavedMap = SaveGame->GetSavedMapWithMapName(WorldName);
+		// 清空該地圖名稱已儲存的 Actor 資訊
+		SavedMap.SavedActors.Empty();
+
+		// 遍歷世界中的所有 Actor
+		for (FActorIterator It(World); It; ++It)
+		{
+			AActor* Actor = *It;
+
+			// 檢查 Actor 存在並實作了 USaveInterface 介面
+			if (!IsValid(Actor) || !Actor->Implements<USaveInterface>())
+			{
+				continue;
+			}
+
+			// 設定要儲存的資訊
+			FSavedActor SavedActor;
+			SavedActor.ActorName = Actor->GetFName();
+			SavedActor.Transform = Actor->GetTransform();
+
+			// 創建一個記憶體寫入器 (FMemoryWriter) 負責將資料寫入到記憶體緩衝區
+			FMemoryWriter MemoryWriter(SavedActor.Bytes);
+			// 創建一個代理序列化器 (FObjectAndNameAsStringProxyArchive)
+			// 第二個參數 'true' 表示這個 Archive 處於「儲存/寫入」模式。
+			FObjectAndNameAsStringProxyArchive Archive(MemoryWriter, true);
+			// 用來標記正在做的事情是屬於遊戲存檔/讀檔系統的一部分
+			// 只有當設定 ArIsSaveGame = true，才會對使用 UPROPERTY(SaveGame) 標籤的屬性資料被寫入到 Archive
+			Archive.ArIsSaveGame = true;
+			// 使用 Actor 的 Serialize 方法將 Actor 的狀態序列化到 Archive
+			Actor->Serialize(Archive);
+			// 將序列化後的 SavedActor 加入到 SavedMap 的 SavedActors 陣列中
+			SavedMap.SavedActors.AddUnique(SavedActor);
+		}
+
+		for (FSavedMap& MapToReplace : SaveGame->SavedMaps)
+		{
+			if (MapToReplace.MapAssetName == WorldName)
+			{
+				// 用更新後的 SavedMap 替換原本的地圖資訊
+				MapToReplace = SavedMap;
+				break;
+			}
+		}
+		// 最後將更新後的 SaveGame 儲存回指定的槽位
+		UGameplayStatics::SaveGameToSlot(SaveGame, AuraGI->LoadSlotName, AuraGI->LoadSlotIndex);
+	}
 }
 
 void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* Slot)
