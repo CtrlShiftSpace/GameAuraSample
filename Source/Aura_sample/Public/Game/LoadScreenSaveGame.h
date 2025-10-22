@@ -17,6 +17,44 @@ enum ESaveSlotStatus
 	Taken
 };
 
+USTRUCT()
+struct FSavedActor
+{
+	GENERATED_BODY()
+
+	// Actor 名稱
+	UPROPERTY()
+	FName ActorName = FName();
+
+	// 紀錄位置旋轉等資訊
+	UPROPERTY()
+	FTransform Transform = FTransform();
+
+	// 紀錄 Actor 的 Serialize 資料
+	UPROPERTY()
+	TArray<uint8> Bytes;
+};
+
+// 比較兩個 FSavedActor 結構中的 ActorName 是否相等
+inline bool operator==(const FSavedActor& Left, const FSavedActor& Right)
+{
+	return Left.ActorName == Right.ActorName;
+}
+
+USTRUCT()
+struct FSavedMap
+{
+	GENERATED_BODY()
+
+	// 地圖資產名稱
+	UPROPERTY()
+	FString MapAssetName = FString();
+
+	// 儲存地圖中的 Actor 資訊
+	UPROPERTY()
+	TArray<FSavedActor> SavedActors;
+};
+
 USTRUCT(BlueprintType)
 struct FSavedAbility
 {
@@ -125,4 +163,14 @@ public:
 	// 儲存擁有技能
 	UPROPERTY()
 	TArray<FSavedAbility> SavedAbilities;
+
+	// 儲存地圖關卡中的資訊
+	UPROPERTY()
+	TArray<FSavedMap> SavedMaps;
+
+	// 根據地圖名稱取得已儲存的地圖資訊
+	FSavedMap GetSavedMapWithMapName(const FString& InMapName);
+
+	// 檢查是否有儲存指定名稱的地圖資訊
+	bool HasMap(const FString& InMapName);
 };
