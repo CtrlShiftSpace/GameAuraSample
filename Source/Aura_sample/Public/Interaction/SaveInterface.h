@@ -20,6 +20,13 @@ class AURA_SAMPLE_API ISaveInterface
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+
+	// 是否需要讀取位置與旋轉資訊
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool ShouldLoadTransform();
+
+	// 讀取 Actor 狀態
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void LoadActor();
 };

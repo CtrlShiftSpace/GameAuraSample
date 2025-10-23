@@ -19,6 +19,11 @@ class AURA_SAMPLE_API ACheckpoint : public APlayerStart, public ISaveInterface
 public:
 	ACheckpoint(const FObjectInitializer& ObjectInitializer);
 
+	/* Save Interface */
+	virtual bool ShouldLoadTransform_Implementation() override;
+	virtual void LoadActor_Implementation() override;
+	/* end Save Interface */
+
 	// 是否位於此存檔位置
 	UPROPERTY(BlueprintReadOnly, SaveGame)
 	bool bReached = false;

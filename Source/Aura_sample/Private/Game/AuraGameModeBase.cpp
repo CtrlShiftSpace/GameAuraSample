@@ -4,6 +4,7 @@
 #include "Game/AuraGameModeBase.h"
 
 #include "EngineUtils.h"
+#include "Aura_sample/AuraLogChannels.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/PlayerStart.h"
@@ -89,7 +90,7 @@ void AAuraGameModeBase::SaveWorldState(UWorld* World)
 	check(AuraGI);
 
 	// 取得存檔資料
-	if (ULoadScreenSaveGame* SaveGame = GetSaveSlotData(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex))
+	if (ULoadScreenSaveGame* SaveGame = Cast<ULoadScreenSaveGame>(GetSaveSlotData(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex)))
 	{
 		// 檢查是否有儲存過此地圖關卡資訊
 		if (!SaveGame->HasMap(WorldName))
@@ -146,6 +147,62 @@ void AAuraGameModeBase::SaveWorldState(UWorld* World)
 		}
 		// 最後將更新後的 SaveGame 儲存回指定的槽位
 		UGameplayStatics::SaveGameToSlot(SaveGame, AuraGI->LoadSlotName, AuraGI->LoadSlotIndex);
+	}
+}
+
+void AAuraGameModeBase::LoadWorldState(UWorld* World) const
+{
+	// 取得當前世界的地圖名稱
+	FString WorldName = World->GetMapName();
+	// 移除地圖名稱的前綴字串
+	WorldName.RemoveFromStart(World->StreamingLevelsPrefix);
+
+	// 取得遊戲實例
+	UAuraGameInstance* AuraGI = GetGameInstance<UAuraGameInstance>();
+	check(AuraGI);
+
+	if (UGameplayStatics::DoesSaveGameExist(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex))
+	{
+		// 取得存檔資料
+		ULoadScreenSaveGame* SaveGame = Cast<ULoadScreenSaveGame>(UGameplayStatics::LoadGameFromSlot(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex));
+		if (SaveGame == nullptr)
+		{
+			UE_LOG(LogAura, Error, TEXT("Failed to load slot."));
+			return;
+		}
+		
+		// 遍歷世界中的所有 Actor
+		for (FActorIterator It(World); It; ++It)
+		{
+			AActor* Actor = *It;
+			// 檢查 Actor 是否實作了 USaveInterface 介面
+			if (!Actor->Implements<USaveInterface>())
+			{
+				continue;
+			}
+
+			// 取得所有 SavedActor 資訊
+			for (FSavedActor SavedActor : SaveGame->GetSavedMapWithMapName(WorldName).SavedActors)
+			{
+				if (SavedActor.ActorName == Actor->GetFName())
+				{
+					if (ISaveInterface::Execute_ShouldLoadTransform(Actor))
+					{
+						Actor->SetActorTransform(SavedActor.Transform);
+					}
+
+					// 創建一個記憶體讀取器 (FMemoryReader) 負責從記憶體緩衝區讀取資料
+					FMemoryReader MemoryReader(SavedActor.Bytes);
+					FObjectAndNameAsStringProxyArchive Archive(MemoryReader, true);
+					Archive.ArIsSaveGame = true;
+					// 使用 Actor 的 Serialize 方法將序列化的資料讀取回 Actor
+					Actor->Serialize(Archive);
+
+					// 呼叫 LoadActor 方法
+					ISaveInterface::Execute_LoadActor(Actor);
+				}
+			}
+		}
 	}
 }
 

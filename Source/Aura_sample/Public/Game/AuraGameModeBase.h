@@ -39,6 +39,8 @@ public:
 	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject);
 	// 儲存世界狀態
 	void SaveWorldState(UWorld* World);
+	// 載入世界狀態
+	void LoadWorldState(UWorld* World) const;
 	
 	// 前往指定地圖關卡
 	void TravelToMap(UMVVM_LoadSlot* Slot);
