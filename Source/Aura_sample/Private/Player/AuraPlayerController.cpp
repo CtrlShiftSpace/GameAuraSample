@@ -19,6 +19,7 @@
 #include "Aura_sample/Aura_sample.h"
 #include "Components/DecalComponent.h"
 #include "GameFramework/Character.h"
+#include "Interaction/HighlightInterface.h"
 #include "UI/Widget/DamageTextComponent.h"
 
 struct FInputAction;
