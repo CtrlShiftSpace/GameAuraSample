@@ -40,11 +40,12 @@ protected:
 
 	// 處理發光效果的函式
 	void HandleGlowEffects();
+
+	// 用來顯示紀錄點位置的 Mesh
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UStaticMeshComponent> CheckpointMesh;
 	
 private:
-	// 用來顯示紀錄點位置的 Mesh
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UStaticMeshComponent> CheckpointMesh;
 
 	// 用來偵測接觸狀況的碰撞體
 	UPROPERTY(VisibleAnywhere)
