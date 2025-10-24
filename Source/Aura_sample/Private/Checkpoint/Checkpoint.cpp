@@ -2,6 +2,7 @@
 
 
 #include "Checkpoint/Checkpoint.h"
+
 #include "Components/SphereComponent.h"
 #include "Game/AuraGameModeBase.h"
 #include "Interaction/PlayerInterface.h"
@@ -26,6 +27,10 @@ ACheckpoint::ACheckpoint(const FObjectInitializer& ObjectInitializer) : Super(Ob
 	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	// 角色會觸發重疊事件
 	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+
+	// 建立移動到的位置元件
+	MoveToComponent = CreateDefaultSubobject<USceneComponent>("MoveToComponent");
+	MoveToComponent->SetupAttachment(GetRootComponent());
 }
 
 bool ACheckpoint::ShouldLoadTransform_Implementation()
@@ -65,7 +70,23 @@ void ACheckpoint::BeginPlay()
 
 	// 綁定重疊事件
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
-	
+	// 設定 CustomDepthStencil 值
+	CheckpointMesh->SetCustomDepthStencilValue(CustomDepthStencilOverride);
+}
+
+void ACheckpoint::HighlightActor_Implementation()
+{
+	CheckpointMesh->SetRenderCustomDepth(true);
+}
+
+void ACheckpoint::UnHighlightActor_Implementation()
+{
+	CheckpointMesh->SetRenderCustomDepth(false);
+}
+
+void ACheckpoint::SetMoveToLocation_Implementation(FVector& OutDestination)
+{
+	OutDestination = MoveToComponent->GetComponentLocation();
 }
 
 void ACheckpoint::HandleGlowEffects()

@@ -245,6 +245,16 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		// 如果滑鼠跟隨時間小於設置的點擊時長，則認為是點擊動作
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
+			// 如果點選的物件有實作 HighlightInterface，則取得要移動的位置
+			if (IsValid(ThisActor) && ThisActor->Implements<UHighlightInterface>())
+			{
+				IHighlightInterface::Execute_SetMoveToLocation(ThisActor, CachedDestination);
+			}
+			else if (GetASC() && !GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+			{
+				// 產生特效
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+			}
 			// 建立導航路徑
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
@@ -260,12 +270,6 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 					CachedDestination = NavPath->PathPoints.Last();
 					// 設定當前為自動移動
 					bAutoRunning = true;
-				}
-				
-				if (GetASC() && !GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
-				{
-					// 產生特效
-					UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
 				}
 			}
 		}
