@@ -27,8 +27,12 @@ public:
 	/* end Save Interface */
 
 	// 是否位於此存檔位置
-	UPROPERTY(BlueprintReadOnly, SaveGame)
+	UPROPERTY(BlueprintReadWrite, SaveGame)
 	bool bReached = false;
+
+	// 是否綁定重疊的事件
+	UPROPERTY(EditAnywhere)
+	bool bBindOverlapCallback = true;
 protected:
 	// 接觸到其他物體的重疊函式
 	UFUNCTION()
@@ -55,6 +59,7 @@ protected:
 	void CheckpointReached(UMaterialInstanceDynamic* DynamicMaterialInstance);
 
 	// 處理發光效果的函式
+	UFUNCTION(BlueprintCallable)
 	void HandleGlowEffects();
 
 	// 用來顯示紀錄點位置的 Mesh

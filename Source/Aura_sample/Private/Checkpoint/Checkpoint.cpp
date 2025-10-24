@@ -68,15 +68,21 @@ void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 綁定重疊事件
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
+	if (bBindOverlapCallback)
+	{
+		// 綁定重疊事件
+		Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
+	}
 	// 設定 CustomDepthStencil 值
 	CheckpointMesh->SetCustomDepthStencilValue(CustomDepthStencilOverride);
 }
 
 void ACheckpoint::HighlightActor_Implementation()
 {
-	CheckpointMesh->SetRenderCustomDepth(true);
+	if (!bReached)
+	{
+		CheckpointMesh->SetRenderCustomDepth(true);
+	}
 }
 
 void ACheckpoint::UnHighlightActor_Implementation()
