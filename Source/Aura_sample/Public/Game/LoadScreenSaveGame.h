@@ -116,9 +116,14 @@ public:
 	UPROPERTY()
 	FString MapName = FString("Default Map Name");
 
+	// 指定關卡地圖名稱
+	UPROPERTY()
+	FString MapAssetName = FString("Default Map Asset Name");
+
 	// 儲存玩家生成點標籤
 	UPROPERTY()
 	FName PlayerStartTag;
+	
 
 	// 存檔槽位狀態
 	UPROPERTY()

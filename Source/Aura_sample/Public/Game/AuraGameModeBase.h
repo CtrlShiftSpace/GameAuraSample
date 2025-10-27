@@ -38,7 +38,7 @@ public:
 	// 儲存遊戲進度資料
 	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject);
 	// 儲存世界狀態
-	void SaveWorldState(UWorld* World);
+	void SaveWorldState(UWorld* World, const FString& DestinationMapAssetName = FString(""));
 	// 載入世界狀態
 	void LoadWorldState(UWorld* World) const;
 	
@@ -66,6 +66,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<FString, TSoftObjectPtr<UWorld>> Maps;
 
+	// 從 關卡素材名稱 取得 名稱
+	FString GetMapNameFromMapAssetName(const FString& MapAssetName) const;
+	
 	// 覆寫玩家生成位置
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 	
