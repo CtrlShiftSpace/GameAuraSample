@@ -7,6 +7,7 @@
 #include "Aura_sample/AuraLogChannels.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/PlayerStart.h"
 #include "Interaction/SaveInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -28,6 +29,7 @@ void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 	// 儲存玩家生成點標籤
 	LoadScreenSaveGame->PlayerStartTag = LoadSlot->PlayerStartTag;
 	LoadScreenSaveGame->PlayerLevel = LoadSlot->GetPlayerLevel();
+	LoadScreenSaveGame->MapAssetName = LoadSlot->MapAssetName;
 
 	// 將 SaveGameObject 儲存
 	UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame, LoadSlot->GetLoadSlotName(), SlotIndex);
@@ -259,6 +261,18 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		return SelectedActor;
 	}
 	return nullptr;
+}
+
+void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter)
+{
+	// 讀取上次存檔資料
+	ULoadScreenSaveGame* SaveGame = RetrieveInGameSaveData();
+	if (!IsValid(SaveGame))
+	{
+		return;
+	}
+
+	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGame->MapAssetName));
 }
 
 void AAuraGameModeBase::BeginPlay()

@@ -55,8 +55,14 @@ void ACheckpoint::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		bReached = true;
 		if (AAuraGameModeBase* AuraGM = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
 		{
+			// 存檔所在關卡名稱
+			const UWorld* World = GetWorld();
+			FString MapName = World->GetMapName();
+			// 移除關卡前綴名稱
+			MapName.RemoveFromStart(World->StreamingLevelsPrefix);
+
 			// 存檔遊戲世界狀態
-			AuraGM->SaveWorldState(GetWorld());
+			AuraGM->SaveWorldState(GetWorld(), MapName);
 		}
 		IPlayerInterface::Execute_SaveProgress(OtherActor, PlayerStartTag);
 		// 處理 Checkpoint 物件發光效果

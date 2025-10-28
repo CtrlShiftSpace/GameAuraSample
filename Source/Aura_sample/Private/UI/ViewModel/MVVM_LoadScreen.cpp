@@ -51,6 +51,8 @@ void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot)
 	LoadSlots[Slot]->SetPlayerLevel(1);
 	// 設置 Player Start Tag
 	LoadSlots[Slot]->PlayerStartTag = AuraGameMode->DefaultPlayerStartTag;
+	// 設置玩家所處的地圖資訊
+	LoadSlots[Slot]->MapAssetName = AuraGameMode->DefaultMap.ToSoftObjectPath().GetAssetName();
 	AuraGameMode->SaveSlotData(LoadSlots[Slot], Slot);
 	LoadSlots[Slot]->InitializeSlot();
 

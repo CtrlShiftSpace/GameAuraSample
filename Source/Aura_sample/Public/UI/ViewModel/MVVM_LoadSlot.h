@@ -57,6 +57,10 @@ public:
 	UPROPERTY()
 	FName PlayerStartTag;
 
+	// 紀錄關卡素材的名稱
+	UPROPERTY()
+	FString MapAssetName;
+
 	/* 由於 FieldNotify 需要 Getter */
 	
 	// 取得 PlayerName 

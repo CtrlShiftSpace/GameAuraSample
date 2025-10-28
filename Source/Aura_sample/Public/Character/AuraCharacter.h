@@ -42,7 +42,16 @@ public:
 	
 	/** Combat Interface */
 	virtual int32 GetPlayerLevel_Implementation() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	/** end Combat Interface */
+
+	// 死亡後的等待延遲時間
+	UPROPERTY(EditDefaultsOnly)
+	float DeathTime = 5.f;
+
+	// 用來進行死亡後等待時間的計時
+	UPROPERTY(EditDefaultsOnly)
+	FTimerHandle DeathTimer;
 
 	// 升級特效
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

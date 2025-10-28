@@ -273,6 +273,30 @@ int32 AAuraCharacter::GetPlayerLevel_Implementation()
 	return AuraPlayerState->GetPlayerLevel();
 }
 
+void AAuraCharacter::Die(const FVector& DeathImpulse)
+{
+	Super::Die(DeathImpulse);
+
+	// 用來處理倒數計時後要執行的函式
+	FTimerDelegate DeathTimerDelegate;
+	DeathTimerDelegate.BindLambda(
+		[this]()
+		{
+			// 取得 AuraGameMode
+			AAuraGameModeBase* AuraGM = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+			if (AuraGM)
+			{
+				// 呼叫玩家死亡處理
+				AuraGM->PlayerDied(this);
+			}
+		}
+	);
+	// 設定 Timer 並不循環
+	GetWorldTimerManager().SetTimer(DeathTimer, DeathTimerDelegate, DeathTime, false);
+	// 使相機仍保留在原來位置
+	CharacterCamera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+}
+
 void AAuraCharacter::LoadProgress()
 {
 	// 取得 GameMode 並轉為 AuraGameMode 類別

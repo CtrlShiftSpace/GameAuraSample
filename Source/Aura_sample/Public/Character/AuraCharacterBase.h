@@ -115,6 +115,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName TailSocketName;
 
+	UPROPERTY(BlueprintReadOnly)
 	bool bDead = false;
 
 	// 當眩暈狀態改變時呼叫

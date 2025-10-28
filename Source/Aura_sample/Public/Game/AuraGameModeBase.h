@@ -71,7 +71,9 @@ public:
 	
 	// 覆寫玩家生成位置
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
-	
+
+	// 當玩家死亡事件
+	void PlayerDied(ACharacter* DeadCharacter);
 protected:
 	void BeginPlay() override;
 };
