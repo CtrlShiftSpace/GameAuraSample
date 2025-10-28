@@ -110,6 +110,11 @@ void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 	}
 }
 
+void AAuraEnemy::SetLevel(int32 InLevel)
+{
+	Level = InLevel;
+}
+
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();

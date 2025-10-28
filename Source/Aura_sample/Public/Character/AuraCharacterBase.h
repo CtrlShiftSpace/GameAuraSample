@@ -92,6 +92,8 @@ public:
 	UFUNCTION()
 	virtual void OnRep_Burned();
 
+	// 設定角色類型
+	void SetCharacterClass(ECharacterClass InClass);
 protected:
 	// 當遊戲開始或物件產生時觸發
 	virtual void BeginPlay() override;
