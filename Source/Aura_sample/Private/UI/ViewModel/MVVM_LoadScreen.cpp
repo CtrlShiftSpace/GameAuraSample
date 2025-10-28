@@ -37,6 +37,12 @@ void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot)
 {
 	// 取得 GameMode
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	// 檢查 AuraGameMode 是否存在，不存在則顯示提示訊息
+	if (!IsValid(AuraGameMode))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Magenta, TEXT("Please switch to Single Player"));
+		return;
+	}
 	// 更新存檔槽位狀態
 	LoadSlots[Slot]->SlotStatus = ESaveSlotStatus::Taken;
 	// 設置預設關卡地圖名稱
@@ -110,6 +116,11 @@ void UMVVM_LoadScreen::LoadData()
 {
 	// 取得 GameMode
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	// 確認 AuraGameMode 存在
+	if (!IsValid(AuraGameMode))
+	{
+		return;
+	}
 	// 依序載入每個存檔槽位的資料
 	for (const TTuple<int32, UMVVM_LoadSlot*> LoadSlot : LoadSlots)
 	{
