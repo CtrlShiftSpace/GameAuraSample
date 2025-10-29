@@ -81,7 +81,7 @@ struct FSavedAbility
 
 	// 技能等級
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 AbilityLevel;
+	int32 AbilityLevel = 1;
 };
 
 inline bool operator==(const FSavedAbility& Left, const FSavedAbility& Right)
