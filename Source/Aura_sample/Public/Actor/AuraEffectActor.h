@@ -43,11 +43,11 @@ protected:
 	virtual void BeginPlay() override;
 
 	// 計算後的位置
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	FVector CalculatedLocation;
 
 	// 計算後的角度
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	FRotator CalculatedRotation;
 
 	// 是否進行旋轉
